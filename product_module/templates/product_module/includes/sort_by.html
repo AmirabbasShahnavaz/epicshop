@@ -1,0 +1,39 @@
+<div class="category-sort mb-3">
+    <div class="content-box">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="box_filter d-lg-block d-none">
+                    <ul class="list-inline text-start mb-0">
+                        <li class="list-inline-item title-font ms-0">مرتب سازی بر اساس :</li>
+                        <li class="list-inline-item"><a {% if sort_by == 'newest' %}href="javascript:void(0)"
+                                                        class="active_custom"
+                                                        {% else %}onclick="sort_by_filter('newest')"{% endif %}>جدیدترین</a>
+                        </li>
+                        <li class="list-inline-item"><a {% if sort_by == 'cheapest' %}href="javascript:void(0)"
+                                                        class="active_custom"
+                                                        {% else %}onclick="sort_by_filter('cheapest')"{% endif %}>ارزان
+                            ترین</a>
+                        </li>
+                        <li class="list-inline-item"><a {% if sort_by == 'most_expensive' %}href="javascript:void(0)"
+                                                        class="active_custom"
+                                                        {% else %}onclick="sort_by_filter('most_expensive')" {% endif %}>گران
+                            ترین</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="box_filter_counter fs-6"><i class="bi bi-card-list me-2"></i> {{ product_list.count }} کالا
+                </div>
+            </div>
+            <div class="d-lg-none d-block">
+                <h5 class="mb-3">مرتب سازی بر اساس</h5>
+                <select class="form-select" onchange="submit_form()" id="sort-select-mobile">
+                    <option value="">لطفا یکی را انتخاب کنید...</option>
+                    <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>جدید ترین</option>
+                    <option value="cheapest" {% if sort_by == 'cheapest' %}selected{% endif %}>ارزان ترین</option>
+                    <option value="most_expensive" {% if sort_by == 'most_expensive' %}selected{% endif %}>گران ترین
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

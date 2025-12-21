@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load render_partial %}
+{% load thumbnail %}
+{% load humanize %}
+
+{% block title %}{{ site_title }}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'assets/js/plugin/nouislider/nouislider.min.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'assets/js/plugin/nouislider/nouislider.min.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            initPriceSlider({{ filter_min_price }}, {{filter_max_price}}, {{selected_min_price}}, {{selected_max_price}});
+        });
+        window.addEventListener('DOMContentLoaded', sortInputTargets);
+        window.addEventListener('resize', sortInputTargets);
+    </script>
+{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'home_page' %}">خانه</a></li>
+    {% if category_page %}
+        <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'product_list_page' %}">محصولات</a>
+        </li>
+        <li aria-current="page"
+            class="breadcrumb-item active main-color-one-color font-14 fw-bold">{{ category_page.title }}</li>
+    {% else %}
+        <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">محصولات</li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <form id="list_form" method="get">
+        <input type="hidden" name="sort_by" id="id_sort_by" value="{{ sort_by }}">
+        <input type="hidden" id="csrf_token"
+               value="{{ csrf_token }}">
+        {% if search %}
+            <input type="hidden" value="{{ search }}" name="search">
+        {% endif %}
+        <input type="hidden" id="paging_ipt" name="page" value="{{ current_page }}">
+        <div class="content">
+            <div class="container-fluid">
+
+                {% render_partial 'product_module.views.mobile_filter_side_component' %}
+
+                <div class="row gy-3">
+                    {% render_partial 'product_module.views.filter_side_component' %}
+                    <div class="col-lg-9">
+
+                        {% include 'product_module/includes/sort_by.html' %}
+                        <div class="category-pro">
+                            <div class="row g-3">
+                                {% if product_list.count > 0 %}
+                                    {% for product in product_list %}
+                                        <div class="col-md-6 col-xl-4 col-xxl-3">
+                                            <div class="product-box">
+                                                <div class="product-box-image">
+                                                    {% thumbnail product.image "150x150" quality=75 crop="center" as im %}
+                                                        <img src="{{ im.url }}" loading="lazy"
+                                                             alt="{{ product.title }}"
+                                                             class="img-fluid one-image">
+                                                    {% endthumbnail %}
+                                                    {% thumbnail product.get_first_gallery.image "150x150" quality=75 crop="center" as im %}
+                                                        <img src="{{ im.url }}"
+                                                             loading="lazy"
+                                                             alt="{{ product.get_first_gallery.title }}"
+                                                             class="img-fluid two-image">
+                                                    {% endthumbnail %}
+
+                                                    {% if product.productcolor_set.count > 0 %}
+                                                        <div class="color-box">
+                                                            {% for product_color in product.productcolor_set.all %}
+                                                                {% if product_color.quantity >= 1 %}
+                                                                    <div class="color-box-item"
+                                                                         data-bs-toggle="tooltip"
+                                                                         data-bs-placement="left"
+                                                                         data-bs-title="{{ product_color.name }}">
+
+                                                                        <span class="color hint--top"
+                                                                              style="background-color: {{ product_color.color_code }};"></span>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+
+                                                </div>
+                                                <div class="product-box-title">
+                                                    <a href="{% url 'product_details_page' slug=product.slug %}">
+                                                        <h5 class="text-overflow-2">{{ product.title }}</h5>
+                                                    </a>
+                                                </div>
+                                                <div class="product-box-suggest-price d-flex align-items-center justify-content-between">
+                                                    <ins class="font-25">{{ product.get_first_color.price|intcomma:False }}
+                                                        <span>تومان</span></ins>
+                                                </div>
+                                                <div class="product-box-hover-action">
+                                                    <nav class="navbar navbar-expand justify-content-center">
+                                                        <ul class="navbar-nav align-items-center">
+                                                            <li class="nav-item">
+                                                                <a href="{% url 'product_details_page' slug=product.slug %}"
+                                                                   class="nav-item product-box-hover-item me-3">مشاهده
+                                                                    محصول</a>
+                                                            </li>
+                                                            <li class="nav-item"
+                                                                onclick="submit_form_3({{ product.id }}, {{ product.get_first_color.id }})">
+                                                                <a
+                                                                        class="nav-item product-box-hover-item product-box-hover-item-btn me-1"
+                                                                        data-bs-toggle="tooltip"
+                                                                        data-bs-placement="top"
+                                                                        data-bs-title="افزودن به سبد خرید"><i
+                                                                        class="bi bi-basket"></i></a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    {% include 'site_paging.html' %}
+                                {% else %}
+                                    <div class="order-list--empty">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"
+                                             viewBox="0 0 150 150"
+                                             fill="none">
+                                            <path d="M14.8323 44.1052L93.1651 29.6021L106.815 103.327L28.4823 117.83L14.8323 44.1052Z"
+                                                  fill="#B3B9BF"></path>
+                                            <path d="M29.8665 22.2656L14.843 44.1164L44.8008 38.5688L93.1969 29.6086L108.22 7.75781L29.8665 22.2656Z"
+                                                  fill="#C0C2C9"></path>
+                                            <path d="M108.22 7.75781L93.1965 29.6086L106.851 103.355L121.875 81.5039L108.22 7.75781Z"
+                                                  fill="#A6ABB3"></path>
+                                            <path d="M44.7856 38.5598L63.2169 35.1473L68.7622 65.0981L50.331 68.5106L44.7856 38.5598Z"
+                                                  fill="#9BA1A8"></path>
+                                            <path d="M63.2391 35.1539L44.8008 38.5687L59.8242 16.7179L78.2625 13.3054L63.2391 35.1539Z"
+                                                  fill="#9BA1A8"></path>
+                                            <path d="M21.0938 21.0938H16.4062C16.4062 12.0492 23.7656 4.6875 32.8125 4.6875H35.1562V9.375H32.8125C26.3508 9.375 21.0938 14.632 21.0938 21.0938Z"
+                                                  fill="#9BA1A8"></path>
+                                            <path d="M111.875 135.312H109.531V130.625H111.875C118.337 130.625 123.594 125.368 123.594 118.906H128.281C128.281 127.951 120.922 135.312 111.875 135.312Z"
+                                                  fill="#9BA1A8"></path>
+                                            <path d="M104.844 128.281H102.5V123.594H104.844C111.305 123.594 116.562 118.337 116.562 111.875H121.25C121.25 120.92 113.891 128.281 104.844 128.281Z"
+                                                  fill="#9BA1A8"></path>
+                                        </svg>
+                                        <p class="order-list__empty-text">محصولی یافت نشد 🥱!</p></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form action="{% url 'add_to_basket_page' %}" method="post"
+          id="basket_add_form">
+        {% csrf_token %}
+        <input type="hidden" name="c_id" id="c_id">
+        <input type="hidden" name="p_id" id="p_id">
+    </form>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% load humanize %}
+
+{% if products %}
+    <div class="product-slider py-30 site-slider">
+        <div class="container-fluid">
+            <div class="section-title">
+                <div class="section-title-title">
+                    <h2 class="title-font h1">{{ dark_txt }} <span class="main-color-two-color">{{ red_txt }}</span>
+                    </h2>
+                    <div class="Dottedsquare"></div>
+                </div>
+            </div>
+
+            <div class="swiper pro-slider">
+                <div class="swiper-wrapper align-items-center">
+                    {% for product in products %}
+                        <div class="swiper-slide">
+                            <div class="product-box">
+                                <div class="product-box-image">
+
+                                    <img src="{{ product.image.url }}" loading="lazy"
+                                         alt="{{ product.title }}"
+                                         class="img-fluid one-image">
+                                    <img src="{{ product.get_first_gallery.image.url }}" loading="lazy"
+                                         alt="{{ product.get_first_gallery.title }}"
+                                         class="img-fluid two-image">
+
+                                    {% if product.productcolor_set %}
+                                        <div class="color-box">
+                                            {% for product_color in product.productcolor_set.all %}
+                                                <div class="color-box-item" data-bs-placement="top"
+                                                     data-bs-title="{{ product_color.name }}"
+                                                     data-bs-toggle="tooltip">
+                                                <span class="color hint--top"
+                                                      style="background-color: {{ product_color.color_code }};"></span>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <span class="product-box-image-overlay"></span>
+                                </div>
+                                <div class="product-box-title">
+                                    <a href="{% url 'product_details_page' slug=product.slug %}">
+                                        <h5 class="text-overflow-2">{{ product.title }}</h5>
+                                    </a>
+                                </div>
+                                <div class="product-box-suggest-price d-flex align-items-center justify-content-between">
+                                    <ins class="font-25">{{ product.get_first_color.price|intcomma:False }}
+                                        <span>تومان</span>
+                                    </ins>
+                                </div>
+                                <div class="product-box-hover-action">
+                                    <nav class="navbar navbar-expand justify-content-center">
+                                        <ul class="navbar-nav align-items-center">
+                                            <li class="nav-item">
+                                                <a href="{% url 'product_details_page' slug=product.slug %}"
+                                                   class="nav-item product-box-hover-item me-3">مشاهده محصول</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{% url 'product_details_page' slug=product.slug %}"
+                                                   class="nav-item product-box-hover-item product-box-hover-item-btn me-1"
+                                                   data-bs-toggle="tooltip" data-bs-placement="top"
+                                                   data-bs-title="افزودن به سبد خرید"><i class="bi bi-basket"></i></a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </div>
+{% endif %}

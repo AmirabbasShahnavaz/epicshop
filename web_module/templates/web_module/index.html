@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load render_partial %}
+
+{% block title %}{{ site_title }}{% endblock %}
+
+{% block content %}
+    {% render_partial 'web_module.views.main_sliders_component' %}
+    {% render_partial 'web_module.views.category_slider_component' %}
+{#    {% render_partial 'web_module.views.amazing_products_slider_component' %}#}
+    {% render_partial 'web_module.views.middle_banners_component' %}
+    {% render_partial 'web_module.views.best_seller_products_component' %}
+    {% render_partial 'web_module.views.bottom_banners_component' %}
+{#    {% render_partial 'web_module.views.amazing_products_slider_2_component' %}#}
+    {% render_partial 'web_module.views.newest_products_component' %}
+    {% include 'partials/lasted_blogs.html' %}
+    {% render_partial 'web_module.views.cart_convas_basket_component_view' %}
+{% endblock %}

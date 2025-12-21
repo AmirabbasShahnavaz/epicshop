@@ -1,0 +1,17 @@
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            Swal.fire({
+                title:
+                    {% if message.tags == 'success' %} "عملیات موفق"
+                    {% elif message.tags == 'error' %} "خطا"
+                    {% elif message.tags == 'warning' %} "هشدار"
+                    {% else %} "اطلاعیه"
+                    {% endif %},
+                text: "{{ message|escapejs }}",
+                icon: "{{ message.tags }}",
+                confirmButtonText: "باشه",
+            });
+        </script>
+    {% endfor %}
+{% endif %}

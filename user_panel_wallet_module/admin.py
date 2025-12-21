@@ -1,0 +1,1 @@
+from .model.admin.wallet_admin import Wallet

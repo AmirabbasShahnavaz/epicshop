@@ -1,0 +1,82 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load humanize %}
+
+{% block title %}محصولات مورد علاقه من{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="section-title-title">
+            <h2 class="title-font main-color-two-color h1">محصولات <span class="text-dark">مورد علاقه </span>
+            </h2>
+            <div class="Dottedsquare"></div>
+        </div>
+    </div>
+
+    <div class="content-box">
+        <div class="container-fluid">
+            {% if favorite_products.count >= 1 %}
+                <form method="get" id="list_form">
+                    <input type="hidden" id="paging_ipt" name="page" value="{{ current_page }}">
+                </form>
+                <ul class="row gy-3 ps-0">
+                    {% for favorite_product in favorite_products %}
+                        <div class="col-sm-6">
+                            <div class="cart-canvas border rounded-3 p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-4 ps-0">
+                                        <img src="{{ favorite_product.product.image.url }}" width="200"
+                                             alt="{{ favorite_product.product.title }}">
+                                    </div>
+                                    <div class="col-8">
+                                        <h3 class="text-overflow-2 font-16">{{ favorite_product.product.title }}</h3>
+                                        <div class="product-box-suggest-price my-2  d-flex align-items-center justify-content-between">
+                                            <ins class="font-25 ms-0">{{ favorite_product.product.get_first_color.price|intcomma:False }}
+                                                <span>تومان</span></ins>
+                                        </div>
+                                        <div class="cart-canvas-foot d-flex align-items-center justify-content-between">
+                                            <div class="cart-canvas-delete">
+                                                <a onclick="submit_form_question('delete_favorite_form{{ forloop.counter }}')"
+                                                   class="btn"><i class="bi bi-x"></i></a>
+                                            </div>
+                                            <form method="post" id="delete_favorite_form{{ forloop.counter }}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="favorite_id"
+                                                       value="{{ favorite_product.id }}">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </ul>
+                {% include 'user_panel/partials/user_panel_paging.html' %}
+            {% else %}
+                <div class="order-list--empty">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"
+                         viewBox="0 0 150 150"
+                         fill="none">
+                        <path d="M14.8323 44.1052L93.1651 29.6021L106.815 103.327L28.4823 117.83L14.8323 44.1052Z"
+                              fill="#B3B9BF"></path>
+                        <path d="M29.8665 22.2656L14.843 44.1164L44.8008 38.5688L93.1969 29.6086L108.22 7.75781L29.8665 22.2656Z"
+                              fill="#C0C2C9"></path>
+                        <path d="M108.22 7.75781L93.1965 29.6086L106.851 103.355L121.875 81.5039L108.22 7.75781Z"
+                              fill="#A6ABB3"></path>
+                        <path d="M44.7856 38.5598L63.2169 35.1473L68.7622 65.0981L50.331 68.5106L44.7856 38.5598Z"
+                              fill="#9BA1A8"></path>
+                        <path d="M63.2391 35.1539L44.8008 38.5687L59.8242 16.7179L78.2625 13.3054L63.2391 35.1539Z"
+                              fill="#9BA1A8"></path>
+                        <path d="M21.0938 21.0938H16.4062C16.4062 12.0492 23.7656 4.6875 32.8125 4.6875H35.1562V9.375H32.8125C26.3508 9.375 21.0938 14.632 21.0938 21.0938Z"
+                              fill="#9BA1A8"></path>
+                        <path d="M111.875 135.312H109.531V130.625H111.875C118.337 130.625 123.594 125.368 123.594 118.906H128.281C128.281 127.951 120.922 135.312 111.875 135.312Z"
+                              fill="#9BA1A8"></path>
+                        <path d="M104.844 128.281H102.5V123.594H104.844C111.305 123.594 116.562 118.337 116.562 111.875H121.25C121.25 120.92 113.891 128.281 104.844 128.281Z"
+                              fill="#9BA1A8"></path>
+                    </svg>
+                    <p class="order-list__empty-text">محصولی یافت نشد 🥱!</p></div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

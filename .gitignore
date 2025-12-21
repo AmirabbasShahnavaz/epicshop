@@ -1,0 +1,67 @@
+# ================================
+# Python / Django
+# ================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ================================
+# Virtual Environments
+# ================================
+.venv/
+venv/
+env/
+ENV/
+
+# ================================
+# Django local files
+# ================================
+db.sqlite3
+db.sqlite3-journal
+
+# ================================
+# Environment variables
+# ================================
+.env
+.env.*
+*.env
+
+# ================================
+# Static & Media (IMPORTANT)
+# ================================
+# collectstatic output (DO NOT COMMIT)
+staticfiles/
+
+# user uploaded files (DO NOT COMMIT)
+media/
+CACHE/
+
+# NOTE:
+# static/ SHOULD BE COMMITTED
+# do NOT ignore static/
+
+# ================================
+# OS files
+# ================================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ================================
+# IDE / Editors
+# ================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

@@ -1,0 +1,61 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% block title %}مدیریت حساب کاربری{% endblock %}
+
+{% block bread_camp %}
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">مدیریت حساب کاربری</li>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="row gy-3 align-items-center">
+            <div class="col-sm-8">
+                <div class="section-title-title">
+                    <h2 class="title-font main-color-two-color h1">پروفایل <span class="text-dark">کاربری </span>
+                    </h2>
+                    <div class="Dottedsquare"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="section-title-link text-sm-end text-start">
+                    <a class="btn main-color-one-bg" href="{% url 'user_panel_edit_user_page' %}">ویرایش پروفایل<i class="bi bi-pencil-square ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-custom slider-parent p-0">
+        <div class="table-responsive shadow-box roundedTable p-0">
+            <table class="table main-table rounded-0">
+                <tbody>
+                <tr>
+                    {% if user.is_full_name %}
+                        <td colspan="2">
+                            <h6 class="fw-bold font-18  text-muted ">نام و نام خانوادگی:</h6>
+                            <p class=" mt-2 font-16">{{ user.get_full_name }}</p>
+                        </td>
+                    {% endif %}
+
+                    <td colspan="2">
+                        <h6 class="text-muted fw-bold font-18 ">شماره تلفن:</h6>
+                        <p class=" mt-2 font-16">{{ user.mobile }}</p>
+                    </td>
+
+                    {% if user.email %}
+                        <td colspan="2">
+                            <h6 class="fw-bold font-18 text-muted">پست الکترونیک:</h6>
+                            <p class=" mt-2 font-16">{{ user.email }}</p>
+                        </td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <td colspan="8" class="no-border">
+                        <h6 class="fw-bold font-18  text-muted">آدرس: </h6>
+                        <p class=" mt-2 font-16">تهران -مهرآباد جنوبی</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

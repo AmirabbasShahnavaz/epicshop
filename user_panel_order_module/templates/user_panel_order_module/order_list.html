@@ -1,0 +1,226 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load poll_extras %}
+{% load humanize %}
+
+{% block title %}سفارش های من{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">لیست سفارش های من</li>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="section-title-title">
+            <h2 class="title-font main-color-two-color h1">آخرین <span class="text-dark">سفارشات </span>
+            </h2>
+            <div class="Dottedsquare"></div>
+        </div>
+    </div>
+
+    <div class="alert slider-parent bg-white mt-5 shadow-box rounded-4">
+        <div class="tab-product-nav tab-panel-tbl  p-3 rounded-3">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button {% if status == 'CANCELED' and paid_count >= 1 %}onclick="submit_form_value('order_status','PAID')"{% endif %}
+                            class="nav-link {% if status == 'PAID' %}active{% endif %} btn border-bottom-0"
+                            id="latest-order" data-bs-toggle="tab"
+                            data-bs-target="#latest-order-pane" type="button" role="tab"
+                            aria-controls="latest-order-pane" aria-selected="true">سفارشات پرداخت شده
+                        {% if paid_count >= 1 %}
+                            <span class="badge main-color-green ms-1">{{ paid_count }}</span>{% endif %}</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button {% if status == 'PAID'  and canceled_count >= 1 %}onclick="submit_form_value('order_status','CANCELED')"{% endif %}
+                            class="nav-link {% if status == 'CANCELED' %}active{% endif %} btn border-bottom-0"
+                            id="cancel-order" data-bs-toggle="tab"
+                            data-bs-target="#cancel-order-pane" type="button" role="tab"
+                            aria-controls="cancel-order-pane" aria-selected="false" tabindex="-1">لغو شده ها
+                        {% if canceled_count >= 1 %}
+                            <span class="badge main-color-green ms-1">{{ canceled_count }}</span>{% endif %}
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <form method="get" id="list_form">
+            <input type="hidden" id="paging_ipt" name="page" value="{{ current_page }}">
+            <input type="hidden" id="order_status" name="status" value="{{ status }}">
+        </form>
+        <div class="tab-content tab-product-content" id="myTabContent">
+            <div class="tab-pane fade {% if status == 'PAID' %}show active{% endif %}" id="latest-order-pane"
+                 role="tabpanel" aria-labelledby="latest-order"
+                 tabindex="0">
+                {% if paid_count >= 1 %}
+                    <div class="panel-latest-order">
+                        <div class="table-responsive roundedTable p-0">
+                            <table class="table table-bordered main-table rounded-0">
+                                <tbody>
+                                {% for order in order_list %}
+                                    <tr>
+                                        <td colspan="2" class="align-middle">
+                                            <div class="avatar-group d-flex align-items-center justify-content-center assigned-avatar">
+                                                {% for order_item in order.orders.all %}
+                                                    <div class="avatar avatar-md" data-bs-toggle="tooltip"
+                                                         data-bs-placement="top"
+                                                         aria-label="{{ order_item.product.title }}"
+                                                         data-bs-original-title="{{ order_item.product.title }}">
+                                                        <a href="">
+                                                            <img src="{{ order_item.product.image.url }}"
+                                                                 alt="{{ order_item.product.title }}"
+                                                                 class="rounded-circle pull-up">
+                                                        </a>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                        <td colspan="2" class="align-middle">
+                                            <h5 class="text-overflow-1 mt-2 h6">
+                                                سفارش شماره {{ order.id }} {{ order.address.city.title }}
+                                            </h5>
+                                        </td>
+                                        <td colspan="2" class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-muted font-18">کد سفارش</p>
+                                                <p class="mb-0 ms-2 fw-bold">{{ order.id }}</p>
+                                            </div>
+                                            <p class="mb-0 text-muted mt-2 font-16">{{ order.get_order_transaction.updated_at|to_shamsi }}</p>
+                                        </td>
+                                        <td colspan="2" class="align-middle">
+                                            <div class="d-flex align-items-center">
+                                                <p class="mb-0 text-muted font-18">مبلغ</p>
+                                                <p class="mb-0 ms-2 fw-bold">{{ order.amount|get_pay_amount|intcomma:False }}
+                                                    تومان</p>
+                                            </div>
+                                            <p class="mb-0 fw-bold mt-2 font-16"><i
+                                                    class="bi bi-check-circle-fill me-1 main-color-three-color"></i>
+                                                تحویل داده شده</p>
+                                        </td>
+                                        <td colspan="2" class="align-middle">
+                                            <div class="text-center">
+                                                <a href="{% url 'user_panel_order_details_page' pk=order.pk %}"
+                                                   class="btn main-color-one-bg">مشاهده</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% include 'user_panel/partials/user_panel_paging.html' %}
+                {% else %}
+                    <div class="order-list--empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"
+                             fill="none">
+                            <path d="M14.8323 44.1052L93.1651 29.6021L106.815 103.327L28.4823 117.83L14.8323 44.1052Z"
+                                  fill="#B3B9BF"></path>
+                            <path d="M29.8665 22.2656L14.843 44.1164L44.8008 38.5688L93.1969 29.6086L108.22 7.75781L29.8665 22.2656Z"
+                                  fill="#C0C2C9"></path>
+                            <path d="M108.22 7.75781L93.1965 29.6086L106.851 103.355L121.875 81.5039L108.22 7.75781Z"
+                                  fill="#A6ABB3"></path>
+                            <path d="M44.7856 38.5598L63.2169 35.1473L68.7622 65.0981L50.331 68.5106L44.7856 38.5598Z"
+                                  fill="#9BA1A8"></path>
+                            <path d="M63.2391 35.1539L44.8008 38.5687L59.8242 16.7179L78.2625 13.3054L63.2391 35.1539Z"
+                                  fill="#9BA1A8"></path>
+                            <path d="M21.0938 21.0938H16.4062C16.4062 12.0492 23.7656 4.6875 32.8125 4.6875H35.1562V9.375H32.8125C26.3508 9.375 21.0938 14.632 21.0938 21.0938Z"
+                                  fill="#9BA1A8"></path>
+                            <path d="M111.875 135.312H109.531V130.625H111.875C118.337 130.625 123.594 125.368 123.594 118.906H128.281C128.281 127.951 120.922 135.312 111.875 135.312Z"
+                                  fill="#9BA1A8"></path>
+                            <path d="M104.844 128.281H102.5V123.594H104.844C111.305 123.594 116.562 118.337 116.562 111.875H121.25C121.25 120.92 113.891 128.281 104.844 128.281Z"
+                                  fill="#9BA1A8"></path>
+                        </svg>
+                        <p class="order-list__empty-text">سفارشی موجود نیست!</p></div>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade {% if status == 'CANCELED' %}show active{% endif %}" id="cancel-order-pane"
+                 role="tabpanel" aria-labelledby="cancel-order"
+                 tabindex="0">
+                <div class="order-list__table-body" id="js-orders-table-body">
+                    {% if canceled_count >= 1 %}
+                        <div class="panel-latest-order">
+                            <div class="table-responsive roundedTable p-0">
+                                <table class="table table-bordered main-table rounded-0">
+                                    <tbody>
+                                    {% for order in order_list %}
+                                        <tr>
+                                            <td colspan="2" class="align-middle">
+                                                <div class="avatar-group d-flex align-items-center justify-content-center assigned-avatar">
+                                                    {% for order_item in order.orders.all %}
+                                                        <div class="avatar avatar-md" data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             aria-label="{{ order_item.product.title }}"
+                                                             data-bs-original-title="{{ order_item.product.title }}">
+                                                            <a href="{% url 'product_details_page' slug=order_item.product.slug %}">
+                                                                <img src="{{ order_item.product.image.url }}"
+                                                                     alt="{{ order_item.product.title }}"
+                                                                     class="rounded-circle pull-up">
+                                                            </a>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </td>
+                                            <td colspan="2" class="align-middle">
+                                                <h5 class="text-overflow-1 mt-2 h6">
+                                                    سفارش شماره {{ order.id }} {{ order.address.city.title }}
+                                                </h5>
+                                            </td>
+                                            <td colspan="2" class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <p class="mb-0 text-muted font-18">کد سفارش</p>
+                                                    <p class="mb-0 ms-2 fw-bold">{{ order.id }}</p>
+                                                </div>
+                                                <p class="mb-0 text-muted mt-2 font-16">{{ order.updated_at|to_shamsi }}</p>
+                                            </td>
+                                            <td colspan="2" class="align-middle">
+                                                <div class="d-flex align-items-center">
+                                                    <p class="mb-0 text-muted font-18">مبلغ</p>
+                                                    <p class="mb-0 ms-2 fw-bold">{{ order.amount|get_pay_amount|intcomma:False }}
+                                                        تومان</p>
+                                                </div>
+                                                <p class="mb-0 fw-bold mt-2 font-16"><i
+                                                        class="bi bi-x-circle-fill me-1 text-danger"></i>
+                                                    لغو شده</p>
+                                            </td>
+                                            <td colspan="2" class="align-middle">
+                                                <div class="text-center">
+                                                    <a class="btn main-color-one-bg" disabled>مشاهده</a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% include 'user_panel/partials/user_panel_paging.html' %}
+                    {% else %}
+                        <div class="order-list--empty">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"
+                                 fill="none">
+                                <path d="M14.8323 44.1052L93.1651 29.6021L106.815 103.327L28.4823 117.83L14.8323 44.1052Z"
+                                      fill="#B3B9BF"></path>
+                                <path d="M29.8665 22.2656L14.843 44.1164L44.8008 38.5688L93.1969 29.6086L108.22 7.75781L29.8665 22.2656Z"
+                                      fill="#C0C2C9"></path>
+                                <path d="M108.22 7.75781L93.1965 29.6086L106.851 103.355L121.875 81.5039L108.22 7.75781Z"
+                                      fill="#A6ABB3"></path>
+                                <path d="M44.7856 38.5598L63.2169 35.1473L68.7622 65.0981L50.331 68.5106L44.7856 38.5598Z"
+                                      fill="#9BA1A8"></path>
+                                <path d="M63.2391 35.1539L44.8008 38.5687L59.8242 16.7179L78.2625 13.3054L63.2391 35.1539Z"
+                                      fill="#9BA1A8"></path>
+                                <path d="M21.0938 21.0938H16.4062C16.4062 12.0492 23.7656 4.6875 32.8125 4.6875H35.1562V9.375H32.8125C26.3508 9.375 21.0938 14.632 21.0938 21.0938Z"
+                                      fill="#9BA1A8"></path>
+                                <path d="M111.875 135.312H109.531V130.625H111.875C118.337 130.625 123.594 125.368 123.594 118.906H128.281C128.281 127.951 120.922 135.312 111.875 135.312Z"
+                                      fill="#9BA1A8"></path>
+                                <path d="M104.844 128.281H102.5V123.594H104.844C111.305 123.594 116.562 118.337 116.562 111.875H121.25C121.25 120.92 113.891 128.281 104.844 128.281Z"
+                                      fill="#9BA1A8"></path>
+                            </svg>
+                            <p class="order-list__empty-text">سفارشی موجود نیست!</p></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

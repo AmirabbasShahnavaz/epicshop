@@ -1,0 +1,33 @@
+{% load render_partial %}
+<!doctype html>
+<html class="no-js" dir="rtl" lang="Fa_IR">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% include 'authentication/partials/header_references.html' %}
+    {% block styles %}{% endblock %}
+</head>
+<body>
+<div id="page-loader">
+    <div class="loader-content">
+        <div class="spinner"></div>
+        <p class="loading-text">در حال بارگذاری سایت...</p>
+    </div>
+</div>
+
+{% block content %}{% endblock %}
+
+{% include 'authentication/partials/footer_references.html' %}
+{% include 'site_notifications.html' %}
+{% block scripts %}{% endblock %}
+
+<script>
+    document.body.classList.add("loading");
+
+    window.addEventListener("load", () => {
+        const loader = document.getElementById("page-loader");
+        loader.classList.add("hide");
+        document.body.classList.remove("loading");
+    });
+</script>
+</body>
+</html>

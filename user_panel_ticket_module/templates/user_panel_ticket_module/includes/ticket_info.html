@@ -1,0 +1,55 @@
+{% load poll_extras %}
+
+<div class="card slider-parent rounded-3">
+    <div class="card-body">
+        <div class="ticket-settings">
+            <div class="ticket-status">
+                    <span class="bg-{{ ticket.status|ticket_badge_status }} badge rounded-0 font-16">
+                        {% if ticket.status == 'Pending' or ticket.status == 'AnsweredByUser' %}
+                            درحال بررسی
+                        {% else %}
+                            {{ ticket.get_status_display }}
+                        {% endif %}
+                    </span>
+                <span class="text-muted font-16 fw-lighter float-end">{{ ticket.ticket_code }}#</span>
+            </div>
+            <div class="ticket-title mt-3">
+                <h6 class="text-justify text-muted fw-bold">{{ ticket.title }}</h6>
+            </div>
+            <div class="ticket-created-at mt-3">
+                <i class="bi bi-clock me-1"></i>
+                <span>تاریخ ایجاد {{ ticket.created_at|jalali_format }} </span>
+            </div>
+            <div class="ticket-created-at mt-3">
+                <i class="bi bi-fingerprint me-1"></i>
+                <span>اهمیت : {{ ticket.get_priority_display }}</span>
+            </div>
+            <div class="ticket-created-at mt-3">
+                <i class="bi bi-bank me-1"></i>
+                <span>بخش مربوطه : {{ ticket.get_section_display }}</span>
+            </div>
+            {% if not ticket.status == 'Closed' %}
+                <form action="{% url 'user_panel_ticket_cancel_page' %}" method="post" id="cancel_ticket_frm">
+                    {% csrf_token %}
+                    <input type="hidden" name="ticket_code" value="{{ ticket.ticket_code }}">
+                </form>
+                <div class="ticket-action d-flex justify-content-between mt-3">
+                    <button onclick="submit_form_question('cancel_ticket_frm')" class="btn btn-danger btn-sm">بستن
+                        تیکت
+                    </button>
+                    <a href="{% url 'user_panel_ticket_list_page' %}" class="btn main-color-one-bg btn-sm">بازگشت به
+                        لیست<i
+                                class="bi bi-reply-all-fill ms-2"></i>
+                    </a>
+                </div>
+            {% else %}
+                <div class="ticket-action mt-3">
+                    <a href="{% url 'user_panel_ticket_list_page' %}" class="btn main-color-one-bg btn-sm">بازگشت به
+                        لیست<i
+                                class="bi bi-reply-all-fill ms-2"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

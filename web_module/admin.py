@@ -1,0 +1,1 @@
+from .model.admin.banner_admin import BannerAdmin

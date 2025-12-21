@@ -1,0 +1,109 @@
+{% load render_partial %}
+
+<div class="col-lg-3 d-lg-block d-none">
+
+    <div class="item-boxs position-sticky top-0">
+
+        <div class="item-box">
+            <div class="title">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h6 class="font-14">محدوده قیمت</h6>
+                    <a class="btn border-0" data-bs-toggle="collapse" href="#collapsePrice" role="button"
+                       aria-expanded="false">
+                        <i class="bi bi-chevron-down"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="desc collapse show" id="collapsePrice1">
+                <div class="filter-item-content">
+                    <div class="filter-box">
+                        <div class="price-labels my-3">
+                            محدوده قیمت:
+                            <span class="min-price">۰</span>
+                            تا
+                            <span class="max-price">۰</span>
+                            تومان
+                        </div>
+                        <div class="price-slider"></div>
+                        <input type="hidden" class="price-min" name="smin_price">
+                        <input type="hidden" class="price-max" name="smax_price">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item-box">
+            <div class="title">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h6 class="font-14">فیلتر بر اساس رنگ</h6>
+                    <a class="btn border-0" data-bs-toggle="collapse" href="#collapseItemBoxExist" role="button"
+                       aria-expanded="false">
+                        <i class="bi bi-chevron-down"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="desc collapse show" id="collapseItemBoxExist">
+                <div class="filter-item-content">
+                    <div class="product-meta-color-items mt-4">
+                        <input type="radio" class="btn-check" name="color" value="all"
+                               id="color_0"
+                               autocomplete="off"
+                               {% if 'all' in selected_color %}checked{% endif %}
+                               onclick="submit_form()">
+                        <label class="btn btt-light" for="color_0">
+                            همه رنگ ها
+                        </label>
+                        {% for color in colors %}
+                            <input type="radio" class="btn-check" name="color" value="{{ color.color_code }}"
+                                   id="color_{{ forloop.counter }}"
+                                   autocomplete="off"
+                                   {% if color.color_code in selected_color %}checked{% endif %}
+                                   onclick="submit_form()">
+                            <label class="btn btt-light" for="color_{{ forloop.counter }}">
+                                <span style="background-color: {{ color.color_code }};"></span>
+                                {{ color.name }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if request.resolver_match.url_name == 'product_list_page' %}
+            <div class="item-box">
+                <div class="title">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h6 class="font-14">فیلتر براساس دسته</h6>
+                        <a class="btn border-0" data-bs-toggle="collapse" href="#collapseItemBoxColor" role="button"
+                           aria-expanded="false">
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="desc collapse show" id="collapseItemBoxColor">
+                    <div class="filter-item-content">
+                        {% for category in categories %}
+                            <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
+                                <div class="form-check">
+                                    <label for="categoryCheck{{ forloop.counter }}"
+                                           class="form-check-label">{{ category.title }}<i class="bi bi-files ms-1"></i></label>
+                                    <input type="checkbox"
+                                           name="category"
+                                           value="{{ category.title }}"
+                                           id="categoryCheck{{ forloop.counter }}"
+                                           class="form-check-input"
+                                           {% if category.title in selected_categories %}checked{% endif %}
+                                           onchange="submit_form()">
+
+                                </div>
+                                <div>
+                                    <span class="fw-bold font-14">({{ category.product_count }})</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</div>

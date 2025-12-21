@@ -1,0 +1,126 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load poll_extras %}
+{% load poll_extras %}
+
+{% block title %}کیف پول من{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            showPersianPricePreview('id_amount', 'wallet_preview');
+        });
+    </script>
+{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">کیف پول من</li>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="row gy-3 align-items-center">
+            <div class="col-sm-8">
+                <div class="section-title-title">
+                    <h2 class="title-font main-color-two-color h1">کیف پول <span class="text-dark">من </span>
+                    </h2>
+                    <div class="Dottedsquare"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="section-title-link text-sm-end text-start">
+                    {% if total_wallet_balance_amount != 0 %}
+                        <p>موجودی شما : <span class="text-primary">{{ total_wallet_balance_amount|persian_amount }} تومان</span>
+                        </p>
+                    {% else %}
+                        <p>موجودی شما : <span class="text-primary">0</span></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-parent content-box rounded-3">
+        <div class="container-fluid">
+            <form action="{% url 'user_panel_wallet_index_page' %}" method="post">
+                {% csrf_token %}
+                <div class="row gy-2">
+                    <div class="col-sm-4">
+                        <div class="comment-item mb-3">
+                            {{ form.amount }}
+                            <label for="{{ form.amount.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.amount.label }} <span
+                                    class="text-danger">*</span></label>
+                        </div>
+                        <div id="wallet_preview_container" class="form-text text-secondary mt-2 d-none">
+
+                            <i class="bi bi-cash-coin me-1 font-15"></i>
+                            <span id="wallet_preview" class="font-15"></span>
+                        </div>
+                        {{ form.amount.errors }}
+                    </div>
+                    <div class="col-12">
+                        <input type="submit" value="شارژ کیف پول" class="btn main-color-two-bg px-5 w-100-in-400 pt-2">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-custom slider-parent p-0">
+        {% if wallet_list.count >= 1 %}
+            <div class="table-responsive shadow-box roundedTable p-0">
+                <form method="get" id="list_form">
+                    <input type="hidden" id="paging_ipt" name="page" value="{{ current_page }}">
+                </form>
+                <table class="table main-table rounded-0">
+                    <thead>
+                    <tr>
+                        <th class="align-middle text-center"><h6 class="fw-bold font-18  text-muted">کد رهگیری</h6></th>
+                        <th class="align-middle text-center"><h6 class="fw-bold font-18  text-muted">مبلغ (تومان)</h6>
+                        </th>
+                        <th class="align-middle text-center"><h6 class="fw-bold font-18  text-muted">توضیحات</h6>
+                        </th>
+                        <th class="align-middle text-center"><h6 class="fw-bold font-18  text-muted">نوع</h6></th>
+                        <th class="align-middle text-center"><h6 class="fw-bold font-18  text-muted">تاریخ پرداخت</h6>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for wallet in wallet_list %}
+                        <tr>
+                            <td class="align-middle text-center"><p
+                                    class="mt-2 font-16">{% if wallet.status == "Creditor" %}#{% else %}
+                                    {{ wallet.wallettransaction.ref_id }}{% endif %}</p>
+                            </td>
+                            <td class="align-middle text-center"><p
+                                    class="mt-2 font-16">{{ wallet.amount|persian_amount }}</p>
+                            </td>
+                            <td class="align-middle text-center"><p
+                                    class="mt-2 font-16">{{ wallet.description }}</p>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span class="badge bg-{{ wallet.status|wallet_badge_status }} ms-2">{{ wallet.get_status_display }}</span>
+                            </td>
+                            <td class="align-middle text-center"><p
+                                    class="mt-2 font-16">
+                                {% if wallet.status == "Creditor" %}{{ wallet.updated_at|to_shamsi }}{% else %}
+                                    {{ wallet.wallettransaction.updated_at|to_shamsi }}{% endif %}</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center font-16" role="alert">تراکنشی یافت نشد 🥱!
+            </div>
+        {% endif %}
+    </div>
+
+    {% include 'user_panel/partials/user_panel_paging.html' with background=true %}
+
+
+{% endblock %}

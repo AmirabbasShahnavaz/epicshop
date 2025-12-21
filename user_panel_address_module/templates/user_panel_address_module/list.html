@@ -1,0 +1,101 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load static %}
+
+{% block title %}آدرس های من{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">آدرس های من</li>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'assets/common/custom/js/custom_dashboard.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="row gy-3 align-items-center">
+            <div class="col-sm-8">
+                <div class="section-title-title">
+                    <h2 class="title-font main-color-two-color h1">آدرس های <span class="text-dark">ثبت شده </span>
+                    </h2>
+                    <div class="Dottedsquare"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="section-title-link text-sm-end text-start">
+                    <a class="btn main-color-one-bg" href="{% url 'user_panel_address_create_page' %}">ثبت آدرس جدید <i
+                            class="bi bi-plus-circle ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-box slider-parent rounded-3">
+        {% if address_list.count > 0 %}
+            <div class="container-fluid">
+                <div class="row">
+                    {% for address in address_list %}
+                        <div class="col-md-4">
+                            <div class="bg-white {% if address.is_active %}active{% endif %} card addresses-item mb-4 shadow-sm">
+                                <div class="gold-members p-4">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h6 class="mb-1">{{ address.label }}</h6>
+                                            <p class="text-overflow-2 address-line">{{ address.full_address }}</p>
+                                            <p class="mb-0 text-black font-weight-bold" id="address_oprators">
+                                                <a class="me-3 text-primary-emphasis"
+                                                   href="{% url 'user_panel_address_edit_page' address_id=address.pk %}"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="ویرایش"
+                                                ><i
+                                                        class="bi bi-pencil"></i> </a>
+                                                <a class="text-danger me-3" onclick="delete_address()"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="حذف"
+                                                ><i
+                                                        class="bi bi-trash"></i> </a>
+                                                {% if not address.is_active %}
+                                                    <a class="text-success" onclick="activate_address()"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-placement="top"
+                                                       title="فعال کردن"><i
+                                                            class="bi bi-check2-square"></i> </a>
+                                                {% else %}
+                                                    <a class="text-success" href="javascript:void(0)"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-placement="top"
+                                                       title="فعال شده"
+                                                    ><i
+                                                            class="bi bi-check2-all"></i> </a>
+                                                {% endif %}
+                                            </p>
+                                            <form action="{% url 'user_panel_address_delete_page' address_id=address.pk %}"
+                                                  method="post" id="address_form">
+                                                {% csrf_token %}
+                                            </form>
+                                            {% if not address.is_active %}
+                                                <form action="{% url 'user_panel_address_activate_page' address_id=address.pk %}"
+                                                      method="post" id="address_form_2">
+                                                    {% csrf_token %}
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="container">
+                <div class="alert alert-info text-center" role="alert">هیچ آدرسی یافت نشد🥱!</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

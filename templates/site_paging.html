@@ -1,0 +1,47 @@
+<div class="col-12">
+    <div class="content-box">
+        <div class="container-fluid">
+            <div class="pagination pagination-2 justify-content-center">
+                {% if paginator.count > 1 %}
+                    {% if page_obj.has_previous %}
+                        <a class="pageitem" onclick="fill_page({{ page_obj.previous_page_number }})">قبلی</a>
+                    {% else %}
+                        <a class="pageitem d-none" href="javascript:void(0)" disabled>قبلی</a>
+                    {% endif %}
+                {% endif %}
+
+
+                {% for page in paginator.page_range %}
+
+                    {% if page >= page_obj.number|add:"-3" and page <= page_obj.number|add:"3" %}
+
+                        {% if not page_obj.has_next %}
+                            <a class="{% if page == page_obj.number %}active last_next{% endif %}"
+                               {% if page != page_obj.number %}onclick="fill_page({{ page }})"{% endif %}>{{ page }}</a>
+
+                        {% elif not page_obj.has_previous %}
+                            <a class="{% if page == page_obj.number %}active last_previous{% endif %}"
+                               {% if page != page_obj.number %}onclick="fill_page({{ page }})"{% endif %}>{{ page }}</a>
+
+                        {% else %}
+                            <a class="{% if page == page_obj.number %}active{% endif %}"
+                               {% if page != page_obj.number %}onclick="fill_page({{ page }})"{% endif %}>{{ page }}</a>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                {% if paginator.count > 1 %}
+                    {% if page_obj.has_next %}
+                        <a class="pageitem" onclick="fill_page({{ page_obj.next_page_number }})">بعدی</a>
+                    {% else %}
+                        <a class="pageitem d-none" href="javascript:void(0)" disabled>بعدی</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

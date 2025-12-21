@@ -1,0 +1,278 @@
+{% load static %}
+{% load render_partial %}
+{% load humanize %}
+<header class="header">
+    <div class="container-fluid">
+        <div class="top-header">
+            <div class="row gy-3 align-items-center">
+                <div class="col-lg-2 col-6 order-lg-1 order-1">
+                    <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center me-2">
+                            <div class="responsive-menu d-lg-none d-block">
+                                <button class="btn border-0 p-0 btn-responsive-menu" type="button"
+                                        data-bs-toggle="offcanvas" data-bs-target="#responsiveMenu"
+                                        aria-controls="responsive menu">
+                                    <i class="bi bi-list font-30"></i>
+                                </button>
+                                <div class="offcanvas offcanvas-start" tabindex="-1" id="responsiveMenu"
+                                     aria-labelledby="responsive menu">
+                                    <div class="offcanvas-header">
+                                        <h5 class="offcanvas-title" id="offcanvasRightLabel">فروشگاه بهرخ</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <a href="" class="text-center d-block mb-3">
+                                            <img src="{% static 'assets/img/logo.png' %}" alt="" class="img-fluid"
+                                                 width="200">
+                                        </a>
+                                        <div class="header-bottom-form mb-4 w-100">
+                                            <div class="search-form">
+                                                <form id="form_search_mobile" action="{% url 'product_list_page' %}">
+                                                    <div class="search-filed">
+                                                        {% if search %}
+                                                            <input type="text" name="q"
+                                                                   placeholder="جستجوی محصولات ..."
+                                                                   class="form-control search-input"
+                                                                   value="{{ search }}"
+                                                                   id="search_input_mobile">
+                                                        {% else %}
+                                                            <input type="text" name="q"
+                                                                   placeholder="جستجوی محصولات ..."
+                                                                   class="form-control search-input"
+                                                                   id="search_input_mobile">
+                                                        {% endif %}
+
+                                                        <button type="submit"
+                                                                class="btn search-btn main-color-one-bg rounded-3">
+                                                            <i class="bi bi-search"></i>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <ul class="rm-item-menu navbar-nav">
+                                            <li class="nav-item bg-ul-f7">
+                                                <a class="nav-link">لیست دسته بندی ها</a>
+                                                <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                                <ul class="navbar-nav h-0">
+                                                    {% for main_category in main_categories %}
+                                                        <li class="nav-item">
+                                                            <a class="nav-link">{{ main_category.title }}</a>
+                                                            <span class="showSubMenu"><i
+                                                                    class="bi bi-chevron-left"></i></span>
+                                                            <ul class="navbar-nav h-0 bg-ul-f7">
+                                                                {% for sub_category in main_category.children_with_products %}
+                                                                    <li class="nav-item"><a
+                                                                            href="{% url 'product_list_category_page' category=sub_category.url_title %}"
+                                                                            class="nav-link">{{ sub_category.title }}</a>
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                            <li class="nav-item bg-ul-f7">
+                                                <a href="" class="nav-link">صفحات</a>
+                                                <span class="showSubMenu"><i class="bi bi-chevron-left"></i></span>
+                                                <ul class="navbar-nav h-0">
+                                                    <li class="nav-item"><a class="nav-link" href="">صفحه
+                                                        محصول</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="top-header-logo">
+                            <a href="{% url 'home_page' %}">
+                                <img src="{% static 'assets/img/logo.png' %}" width="200" alt="">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 order-lg-2 order-3">
+                    <div class="search-form">
+                        <form id="form_search" action="{% url 'product_list_page' %}">
+                            <div class="search-filed">
+                                {% if search %}
+                                    <input type="text" name="q" placeholder="جستجوی محصولات ..."
+                                           class="form-control search-input"
+                                           value="{{ search }}"
+                                           id="search_input">
+                                {% else %}
+                                    <input type="text" name="q" placeholder="جستجوی محصولات ..."
+                                           class="form-control search-input"
+                                           id="search_input">
+                                {% endif %}
+
+                                <button type="submit" class="btn search-btn main-color-one-bg rounded-3">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6 order-lg-3 order-2">
+                    {% if request.user.is_authenticated %}
+                        <div class="dropdown text-end">
+                            <a data-bs-toggle="dropdown"
+                               aria-expanded="false" role="button"
+                               class="btn btn-white auth-dropdown header-register border-0 rounded-pill"
+                               href="{% url 'user_panel_home_page' %}">
+                                <div class="d-flex align-items-center">
+                                    <figure class="avatar">
+                                        {% if user.avatar %}
+                                            <img src="{{ user.avatar.url }}" alt="">
+                                        {% else %}
+                                            <img src="{% static 'assets/img/user.png' %}" alt="">
+                                        {% endif %}
+                                    </figure>
+                                    <span class="ms-3 font-18 username">{{ user.get_header_full_name }}
+                                        <i class="bi bi-chevron-down arrow-auth font-12 ms-2"></i></span>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu flex-column" style="">
+                                {% if request.user.is_superuser %}
+                                    <li><a href="/admin/" target="_blank" class="dropdown-item"><i
+                                            class="bi bi-person-gear me-2"></i> پنل ادمین </a>
+                                    </li>
+                                {% endif %}
+                                <li><a href="{% url 'user_panel_home_page' %}" class="dropdown-item"><i
+                                        class="bi bi-house-door me-2"></i>پروفایل</a>
+                                </li>
+                                <li><a href="{% url 'user_panel_order_list_page' %}" class="dropdown-item"><i
+                                        class="bi bi-cart-check me-2"></i>سفارش های
+                                    من</a></li>
+                                <li><a href="{% url 'user_panel_address_list_page' %}" class="dropdown-item"><i
+                                        class="bi bi-pin-map me-2"></i>آدرس های
+                                    من</a></li>
+                                <li><a href="{% url 'user_panel_ticket_list_page' %}" class="dropdown-item"><i
+                                        class="bi bi-question-circle me-2"></i>درخواست
+                                    پشتیبانی</a></li>
+                                <li><a href="{% url 'user_panel_favorite_products_page' %}" class="dropdown-item"><i
+                                        class="bi bi-heart me-2"></i>محصولات مورد
+                                    علاقه</a></li>
+                                <li><a href="{% url 'logout_page' %}" class="dropdown-item mct-hover"><i
+                                        class="bi bi-arrow-right-square me-2"></i>خروج از حساب کاربری</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="top-header-link d-lg-flex d-none">
+                            <a href="{% url 'login_page' %}" class="top-header-link-login rounded-pill me-2"><i
+                                    class="bi bi-person-lock d-sm-none fs-2 d-sm-block"></i> <span
+                                    class="d-sm-block d-none">ورود</span></a>
+                            <a href="{% url 'register_page' %}"
+                               class="top-header-link-register border-0 btn main-color-one-bg rounded-pill"><i
+                                    class="bi bi-person-add fs-2 d-sm-none d-sm-block"></i> <span
+                                    class="d-sm-block d-none">عضویت</span> </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="mega-menu menu mega-menu-top d-lg-block d-none">
+    <div class="container-fluid">
+        <div class="top-menu-parent">
+            <div class="row align-items-center">
+                <div class="col-lg-9 col-xl-8">
+                    <div class="top-menu-menu">
+                        <ul class="navbar-nav align-items-center">
+                            <li class="position-relative m-0"></li>
+                            <li class="nav-item"><a href="" class="nav-link border-animate fromCenter">
+                                <i class="bi bi-tablet"></i>
+                                لیست دسته بندی ها
+                            </a>
+                                <ul class="list-unstyled shadow-lg back-menu sub-menu mega-container"
+                                    style="background: #fff url('{% static 'assets/img/banner-11.jpg' %}') no-repeat;background-size: 400px !important;">
+                                    {% for main_category in main_categories %}
+                                        <li><a class="title">{{ main_category.title }}</a></li>
+                                        {% for sub_category in main_category.children_with_products %}
+                                            <li>
+                                                <a href="{% url 'product_list_category_page' category=sub_category.url_title %}">{{ sub_category.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a href="" class="nav-link border-animate fromCenter"><i
+                                    class="bi bi-menu-app"></i>منو ساده</a>
+                                <ul class="level-one">
+                                    <li class="position-relative"><a href="">منو شماره 1 <i
+                                            class="bi bi-chevron-left"></i></a>
+                                        <ul class="level-two">
+                                            <li><a href="">زیر منو شماره 1</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            {#                            <li class="nav-item">#}
+                            {#                                <a href="" class="nav-link border-animate fromCenter">#}
+                            {#                                    <i class="bi bi-tag"></i>تخفیف ها و پیشنهاد ها#}
+                            {#                                </a>#}
+                            {#                            </li>#}
+                            <li class="nav-item"><a href="" class="nav-link border-animate fromCenter">
+                                <i class="bi bi-question-octagon"></i>
+                                سوالی
+                                دارید</a>
+                            </li>
+                            <li class="nav-item"><a href="{% url 'product_list_page' %}"
+                                                    class="nav-link border-animate fromCenter">
+                                <i class="bi bi-bag-heart"></i>فروشگاه</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-4">
+                    <div class="d-flex align-items-center justify-content-end">
+                        <div class="d-flex align-items-center top-header-call d-xl-flex d-none">
+                            <div class="top-header-call-title me-3">
+                                <h6 class="text-center h5">021-12345678</h6>
+                                <p class="text-muted">پشتیبانی 24 ساعته</p>
+                            </div>
+                            <div class="top-header-call-icon">
+                                <i class="bi bi-telephone-forward fs-3"></i>
+                            </div>
+                        </div>
+                        <div class="boxa">
+                            <div class="d-flex align-items-center justify-content-end ms-5 boxb">
+                                <a {% if request.user.is_authenticated %}href="{% url 'user_panel_favorite_products_page' %}"{% endif %}
+                                   class="btn-favorite-items highlight">
+                                    <i class="bi bi-heart"></i>
+                                    <span>{{ user_favorite_products_count }}</span>
+                                </a>
+                                {% if user_order %}
+                                    <a class="btn-cart-counter ms-2"
+                                       role="button"
+                                       {% if request.resolver_match.url_name == 'order_page' %}href="{% url 'order_page' %}"{% else %}
+                                       data-bs-toggle="offcanvas"
+                                       href="#offcanvasCart"
+                                       aria-controls="offcanvasCart"{% endif %}>
+
+                                        <span class="text-white me-3">{{ order_items.count }}</span>
+                                        <i class="bi bi-basket"></i>
+                                    </a>
+                                {% else %}
+                                    <a class="btn-cart-counter ms-2"
+                                       role="button"
+                                       {% if user_basket.count <= 0 or request.resolver_match.url_name == 'basket_page' %}href="{% url 'basket_page' %}"{% else %}
+                                       data-bs-toggle="offcanvas"
+                                       href="#offcanvasCart"
+                                       aria-controls="offcanvasCart"{% endif %}>
+
+                                        <span class="text-white me-3">{{ user_basket.count }}</span>
+                                        <i class="bi bi-basket"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

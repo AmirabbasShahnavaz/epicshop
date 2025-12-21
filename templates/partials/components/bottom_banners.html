@@ -1,0 +1,17 @@
+{% load static %}
+
+{% if bottom_banners %}
+    <div class="advert py-30 d-lg-block d-none">
+        <div class="container-fluid">
+            <div class="row gx-2 gy-4">
+                {% for bottom_banner in bottom_banners %}
+                    <div class="col-lg-6">
+                        <a href="{{ bottom_banner.url }}">
+                            <img src="{{ bottom_banner.image }}" class="w-100" alt="{{ bottom_banner.title }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}

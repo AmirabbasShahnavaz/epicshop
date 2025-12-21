@@ -1,0 +1,1 @@
+gunicorn epicshop_project.wsgi:application

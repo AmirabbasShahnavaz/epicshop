@@ -1,0 +1,63 @@
+{% load render_partial %}
+<!doctype html>
+<html class="no-js" dir="rtl" lang="Fa_IR">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% include 'user_panel/partials/header_references.html' %}
+    {% block styles %}{% endblock %}
+</head>
+<body>
+<div id="page-loader">
+    <div class="loader-content">
+        <div class="spinner"></div>
+        <p class="loading-text">در حال بارگذاری سایت...</p>
+    </div>
+</div>
+{% render_partial 'web_module.views.header_component' %}
+
+<div class="bread-crumb py-4">
+    <div class="container-fluid">
+        <nav aria-label="breadcrumb" class="my-lg-0 my-2">
+            <ol class="breadcrumb mb-0">
+                {% block bread_camp %}{% endblock %}
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container">
+        {% render_partial 'web_module.views.user_panel_mobile_sidebar_component_view' %}
+        <div class="row">
+            {% if request.resolver_match.url_name == 'user_panel_ticket_details_page' %}
+                <div class="col-lg-3">
+                    {% include 'user_panel_ticket_module/includes/ticket_info.html' %}
+                </div>
+            {% else %}
+                {% render_partial 'web_module.views.user_panel_sidebar_component_view' %}
+            {% endif %}
+            <div class="col-lg-9">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% render_partial 'web_module.views.cart_convas_basket_component_view' %}
+{% block user_panel_modal %}{% endblock %}
+{% render_partial 'web_module.views.footer_component' %}
+{% include 'user_panel/partials/footer_references.html' %}
+{% include 'site_notifications.html' %}
+{% block scripts %}{% endblock %}
+
+<script>
+    document.body.classList.add("loading");
+
+    window.addEventListener("load", () => {
+        const loader = document.getElementById("page-loader");
+        loader.classList.add("hide");
+        document.body.classList.remove("loading");
+    });
+</script>
+</body>
+</html>

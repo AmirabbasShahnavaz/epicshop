@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load humanize %}
+{% load poll_extras %}
+
+{% block title %}سبد خرید من{% endblock %}
+{% if basket_items.count < 1 %}
+    {% block bread_camp %}
+        <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'home_page' %}">خانه</a></li>
+        <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">
+            {% if basket_items.count >= 1 %}سبد خرید من{% else %}سبد خرید خالی!{% endif %}</li>
+    {% endblock %}
+{% endif %}
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            {% if basket_items.count >= 1 %}
+                <div class="line-step-container d-sm-block d-none">
+                    <div class="line-step">
+                        <div class="line-step-boxs">
+                            <div class="line-step-box complete">
+                                <a href="javascript:void(0)">
+                                    <p>سبد خرید</p>
+                                    <div class="icon">
+                                        1
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="line-step-box disabled">
+                                <a href="javascript:void(0)">
+                                    <p>جزییات پرداخت</p>
+                                    <div class="icon">
+                                        2
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="line-step-box disabled">
+                                <a href="javascript:void(0)">
+                                    <p>تکمیل سفارش</p>
+                                    <div class="icon">
+                                        3
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box1">
+                    <div class="box2">
+                        <div class="row gy-3">
+                            <div class="col-lg-9">
+                                <div class="cart-product-item">
+                                    <div class="container-fluid">
+                                        {% for basket_item in basket_items %}
+                                            <div class="cart-items">
+                                                <div class="content-box">
+                                                    <div class="container-fluid">
+                                                        <div class="item">
+                                                            <div class="row gy-2">
+                                                                <div class="col-md-2 w-100-in-400">
+                                                                    <div class="image">
+                                                                        <img src="{{ basket_item.product.image.url }}"
+                                                                             alt="{{ basket_item.product.title }}"
+                                                                             class="img-fluid">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-10 w-100-in-400">
+                                                                    <div class="d-flex justify-content-between align-items-md-start align-items-end flex-wrap">
+                                                                        <div class="d-flex align-items-start flex-column me-2">
+                                                                            <div class="title d-flex align-items-center flex-wrap">
+                                                                                <a href="{% url 'product_details_page' slug=basket_item.product.slug %}">
+                                                                                    <h6 class="font-16">{{ basket_item.product.title }}</h6>
+                                                                                </a>
+
+                                                                            </div>
+                                                                            <div class="cart-item-feature d-flex align-items-center flex-wrap mt-3">
+                                                                                <div class="item d-flex align-items-center">
+                                                                                    <div class="icon"><i
+                                                                                            class="bi bi-shop"></i>
+                                                                                    </div>
+                                                                                    <div class="saller-name mx-2">
+                                                                                        فروشنده:
+                                                                                    </div>
+                                                                                    <div class="saller-name text-muted">{{ site_seller_name }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="item d-flex align-items-center ms-2">
+                                                                                    <div class="icon"><i
+                                                                                            class="bi bi-shield-check"></i>
+                                                                                    </div>
+                                                                                    <div class="saller-name mx-2">
+                                                                                        گارانتی:
+                                                                                    </div>
+                                                                                    <div class="saller-name text-muted">{{ basket_item.product.warranty_text }}
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="item d-flex align-items-center ms-3">
+                                                                                    <div class="icon"><i
+                                                                                            class="bi bi-palette"></i>
+                                                                                    </div>
+                                                                                    <div class="saller-name mx-2">رنگ:
+                                                                                    </div>
+                                                                                    <div class="saller-name text-muted">{{ basket_item.product_color.name }}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="action d-flex flex-wrap flex-column justify-content-sm-end justify-content-center align-items-center">
+                                                                            <div class="product-box-price flex-column w-100 justify-content-end align-items-end">
+                                                                                <div class="product-box-price-price d-flex">
+                                                                                    <h5 class="f-800 main-color-green-color h2 mb-2">
+                                                                                        {{ basket_item.product_color.price|intcomma:False }}</h5>
+                                                                                    <p class="mb-0 font-12 ms-1 ">
+                                                                                        تومان</p>
+
+                                                                                    <div class="remove ms-3">
+                                                                                        <a href="javascript:void(0)"
+                                                                                           onclick="delete_basket_product({{ basket_item.product.id }},{{ basket_item.product_color.id }})"
+                                                                                           class="text-danger">
+                                                                                            <i class="bi bi-trash-fill"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input type="hidden" id="csrf_token"
+                                                                                       value="{{ csrf_token }}">
+
+                                                                                <div class="counter"
+                                                                                     id="{{ forloop.counter }}">
+                                                                                    <div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+                                                                                        {% if basket_item.quantity <= 1 %}
+                                                                                            <span class="input-group-btn input-group-prepend"
+                                                                                                  onclick="decrease_basket_quantity({{ basket_item.product.id }},{{ basket_item.product_color.id }},true)">
+                                                                                            <button
+                                                                                                    class="btn-counter waves-effect waves-light bootstrap-touchspin-down"
+                                                                                                    type="button"><i
+                                                                                                    class="bi bi-trash-fill font-15"></i></button>
+                                                                                            </span>
+                                                                                        {% else %}
+                                                                                            <span class="input-group-btn input-group-prepend"
+                                                                                                  onclick="decrease_basket_quantity({{ basket_item.product.id }},{{ basket_item.product_color.id }})">
+                                                                                            <button
+                                                                                                    class="btn-counter waves-effect waves-light bootstrap-touchspin-down"
+                                                                                                    type="button">−</button>
+                                                                                            </span>
+                                                                                        {% endif %}
+                                                                                        {% if basket_item.quantity >= basket_item.product_color.quantity %}
+                                                                                            {#                                                                                            <div class="form-control order-quantity">{{ basket_item.quantity }}</div>#}
+                                                                                            <div class="form-control order-quantity">
+                                                                                                {{ basket_item.quantity }}
+                                                                                                <span class="text-danger ms-2">حداکثر</span>
+                                                                                            </div>
+                                                                                            <span class="input-group-btn input-group-append">
+                                                                                            <button disabled
+                                                                                                    class="btn-counter waves-effect waves-light bootstrap-touchspin-up bootstrap-touchspin-injected"
+                                                                                                    type="button">+</button>
+                                                                                        </span>
+                                                                                        {% else %}
+                                                                                            <div class="form-control order-quantity">{{ basket_item.quantity }}</div>
+                                                                                            <span class="input-group-btn input-group-append">
+                                                                                            <button onclick="increase_basket_quantity({{ basket_item.product.id }},{{ basket_item.product_color.id }})"
+                                                                                                    class="btn-counter waves-effect waves-light bootstrap-touchspin-up bootstrap-touchspin-injected"
+                                                                                                    type="button">+</button>
+                                                                                        </span>
+                                                                                        {% endif %}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="cart__order-total">
+                                    <div class="box__shaped-title">
+                                        <svg width="230" height="75" viewBox="0 0 230 75" fill="none">
+                                            <path d="M230 0H0V10C26.2258 10.6605 43.6909 20.4901 52.0499 27.9356C60.4088 35.3811 84.5186 61.9259 84.5186 61.9259C101.038 79.219 128.627 79.219 145.146 61.9259C145.146 61.9259 169.146 35.4578 177.549 28.0042C185.953 20.5506 203.675 10.6625 230 10V0Z"
+                                                  fill="#f4f4f4"></path>
+                                            <defs>
+                                                <linearGradient id="paint0_linear" x1="115" y1="0" x2="115" y2="74.8957"
+                                                                gradientUnits="userSpaceOnUse">
+                                                    <stop stop-color="#FAFBFB"></stop>
+                                                    <stop offset="1" stop-color="#F4F6F8"></stop>
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                        <div class="box__shaped-title__icon"></div>
+                                    </div>
+                                    <div class="cart__order-total-row cart__order-total-row--benefit">
+                                        <div class="order-total-row__col-right">سود شما از خرید :</div>
+                                        <div class="order-total-row__col-left">
+                                            <span>0</span><span class="font-12 ms-1">تومان</span>
+                                        </div>
+                                    </div>
+                                    <div class="cart__order-total-box">
+                                        <div class="cart__order-total-row cart__order-total-row--text">هزینه ارسال در
+                                            ادامه
+                                            بر
+                                            اساس
+                                            آدرس
+                                            و نحوه‌ی ارسال محاسبه و اضافه خواهد شد
+                                        </div>
+                                        <div class="cart__order-total-row cart__order-total-row--total"><label
+                                                class="order-total-row__col-right">جمع سبد خرید :</label>
+                                            <div class="order-total-row__col-left">
+                                                <span>{{ total_price|intcomma:False }}</span><span
+                                                    class="font-12 ms-1">تومان</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <a href="{% url 'basket_next_step_page' %}"
+                                       class="btn w-100 d-block main-color-green py-3">تکمیل
+                                        فرایند
+                                        خرید</a>
+                                    <a href="{% url 'product_list_page' %}"
+                                       class="btn w-100 d-block btn-secondary py-3 ms-2">افزودن محصول دیگر</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="content-box">
+                    <div class="container-fluid">
+                        <div class="order-list--empty">
+                            <img src="{% static 'assets/img/empty-cart.svg' %}" width="500" alt="cart_empty">
+                            <p class="order-list__empty-text">سبد خرید شما خالی است!</p>
+                            <a href="{% url 'product_list_page' %}"
+                               class="btn main-color-one-outline border-2 mt-3 px-4 py-2">رفتن
+                                به فروشگاه</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

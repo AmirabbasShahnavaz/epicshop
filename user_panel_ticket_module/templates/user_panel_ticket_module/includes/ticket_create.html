@@ -1,0 +1,55 @@
+<form action="{% url 'user_panel_ticket_create_page' %}" method="post" id="ticket-form"
+      data-ajax="true"
+      data-ajax-method="post"
+      data-ajax-update="#modal-body"
+      data-ajax-success="on_create_ticket">
+    {% csrf_token %}
+    <div class="row g-4">
+        <div class="col-md-12">
+            <div class="comment-item {% if form.title.errors %}errors{% endif %}">
+                {{ form.title }}
+                <label for="{{ form.title.id_for_label }}"
+                       class="form-label label-float fw-bold">{{ form.title.label }} <span
+                        class="text-danger">*</span></label>
+            </div>
+            {{ form.title.errors }}
+        </div>
+        <div class="col-md-6">
+            <div class="comment-item {% if form.section.errors %}errors{% endif %}">
+                <label for="{{ form.section.id_for_label }}"
+                       class="form-label label-float fw-bold">{{ form.section.label }} <span
+                        class="text-danger">*</span></label>
+                {{ form.section }}
+            </div>
+            {{ form.section.errors }}
+        </div>
+        <div class="col-md-6">
+            <div class="comment-item {% if form.priority.errors %}errors{% endif %}">
+                <label for="{{ form.priority.id_for_label }}"
+                       class="form-label label-float fw-bold">{{ form.priority.label }} <span
+                        class="text-danger">*</span></label>
+                {{ form.priority }}
+            </div>
+            {{ form.priority.errors }}
+        </div>
+        <div class="col-md-12">
+            <div class="comment-item {% if message_form.message.errors %}errors{% endif %}">
+                <label for="{{ message_form.message.id_for_label }}"
+                       class="form-label label-float fw-bold">{{ message_form.message.label }} <span
+                        class="text-danger">*</span></label>
+                {{ message_form.message }}
+            </div>
+            {{ message_form.message.errors }}
+        </div>
+
+        <div class="col-12">
+            <div class="form-group">
+                <button type="submit"
+                        class="btn main-color-one-bg border-0">
+                    ثبت تیکت
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,130 @@
+{% extends 'authentication/authentication_base.html' %}
+
+{% load static %}
+
+{% block title %}ورود به سایت{% endblock %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            loginOtp();
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="client-page content vh-100">
+        <div class="container-fluid h-100">
+            <div class="auth h-100 d-flex align-items-center">
+                <div class="container-fluid">
+                    <div class="auth-items">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="row align-items-center bg-white rounded-3 g-0 shadow-2xl">
+                                    <div class="col-lg-6">
+                                        <div class="login-vector bg-white text-center">
+                                            <img src="{% static 'assets/img/login-vector.jpg' %}" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="rounded-3 auth-parent py-3 bg-white">
+                                            <div class="auth-logo text-center">
+                                                <a href="{% url 'home_page' %}">
+                                                    <img src="{% static 'assets/img/logo.png' %}" width="200" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="auth-form">
+                                                <div class="auth-form-title mb-4 slider-title-desc-center">
+                                                    <h2 class="text-center h4 title-line-bottom-center text-muted title-font">
+                                                        ورود</h2>
+                                                </div>
+
+                                                {% if error_message %}
+                                                    <div class="mt-2 alert alert-danger alert-dismissible fade show"
+                                                         role="alert">
+                                                        <span>{{ error_message }}</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                {% endif %}
+
+                                                <form action="{% url 'login_page' %}" id="form-auth" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="comment-item mt-4 step-username {% if form.mobile.errors %}errors{% endif %}">
+                                                        {{ form.mobile }}
+                                                        <label for="{{ form.mobile.id_for_label }}"
+                                                               class="form-label label-float">{{ form.mobile.label }}</label>
+                                                    </div>
+                                                    <span>{{ form.mobile.errors }}</span>
+
+                                                    <div class="comment-item mt-4 position-relative step-passwd {% if form.password.errors %}errors{% endif %}">
+                                                        {{ form.password }}
+                                                        <label for="{{ form.password.id_for_label }}"
+                                                               class="form-label label-float">{{ form.password.label }}</label>
+                                                        {% if not mobile_session %}
+                                                            <div class="inline-btn-text">
+                                                                <a class="btn border-0 main-color-one-bg" id="login_otp"
+                                                                   onclick="goToOtp('{{ next_url }}',event)">ورود
+                                                                    با پیامک</a>
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="inline-btn-text">
+                                                                <a href="{% url 'login_otp_page' %}"
+                                                                   class="btn border-0 main-color-one-bg">ورود
+                                                                    با پیامک</a>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <span class="step-passwd">{{ form.password.errors }}</span>
+                                                    {% if next_url %}
+                                                        <input type="hidden" name="next" value="{{ next_url }}">
+                                                    {% endif %}
+                                                    <div class="form-group step-one mt-4">
+                                                        <button type="button"
+                                                                class="btn main-color-one-bg border-0 w-100 d-block py-3">
+                                                            ادامه
+                                                        </button>
+                                                    </div>
+                                                    <div class="form-group step-two mt-4">
+                                                        <button type="submit"
+                                                                class="btn btnForm main-color-one-bg border-0 w-100 d-block py-3">
+                                                            ورود
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            {% if next_url %}
+                                                <p class="loginTermsDesc mt-4">اگر حساب کاربری ندارید به <a
+                                                        class="mx-1 inline-block main-color-one-color"
+                                                        href="{% url 'register_page' %}?next={{ next_url }}">ثبت
+                                                    نام در سایت</a> بروید</p>
+
+                                                <p class="loginTermsDesc">اگر رمز عبور خود را فراموش کردید به <a
+                                                        class="mx-1 inline-block main-color-one-color"
+                                                        href="{% url 'forgot_password_page' %}?next={{ next_url }}">فراموشی
+                                                    کلمه
+                                                    عبور</a> بروید</p>
+                                            {% else %}
+                                                <p class="loginTermsDesc mt-4">اگر حساب کاربری ندارید به <a
+                                                        class="mx-1 inline-block main-color-one-color"
+                                                        href="{% url 'register_page' %}">ثبت
+                                                    نام در سایت</a> بروید</p>
+
+                                                <p class="loginTermsDesc">اگر رمز عبور خود را فراموش کردید به <a
+                                                        class="mx-1 inline-block main-color-one-color"
+                                                        href="{% url 'forgot_password_page' %}">فراموشی کلمه
+                                                    عبور</a> بروید</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

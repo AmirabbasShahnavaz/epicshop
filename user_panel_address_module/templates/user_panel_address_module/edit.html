@@ -1,0 +1,140 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load static %}
+
+{% block title %}ویرایش آدرس{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'assets/common/custom/js/custom_dashboard.js' %}"></script>
+{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_address_list_page' %}">آدرس
+        های من</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">ویرایش آدرس</li>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="row gy-3 align-items-center">
+            <div class="col-sm-8">
+                <div class="section-title-title">
+                    <div class="section-title-title">
+                        <h2 class="title-font main-color-two-color h1">ویرایش <span
+                                class="text-dark">آدرس : {{ address.label }}</span>
+                        </h2>
+                        <div class="Dottedsquare"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="section-title-link text-sm-end text-start">
+                    <a class="btn main-color-one-bg" href="{% url 'user_panel_address_list_page' %}">بازگشت <i
+                            class="bi bi-reply-all-fill ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="slider-parent content-box rounded-3">
+        <div class="container-fluid">
+            <form action="{% url 'user_panel_address_edit_page' address_id=address.pk %}" method="post">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="comment-item">
+                            <label class="label-float fw-bold" for="province_id">استان <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select" name="province" id="province_id">
+                                <option value="0">لطفا یک استان را انتخاب کنید ...</option>
+                                {% if provinces %}
+                                    <option value="{{ address.province.pk }}"
+                                            selected>{{ address.province.title }}</option>
+                                    {% for province in provinces %}
+                                        <option value="{{ province.pk }}">{{ province.title }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="comment-item">
+                            <label class="label-float fw-bold" for="id_city">شهر <span
+                                    class="text-danger">*</span></label>
+                            <select name="city" id="id_city" class="form-select">
+                                <option value="0">لطفا یک شهر را انتخاب کنید ...</option>
+                                <option value="{{ address.city.pk }}" selected>{{ address.city.title }}</option>
+                                {% if cities %}
+                                    {% for city in cities %}
+                                        <option value="{{ city.pk }}">{{ city.title }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="comment-item {% if form.label.errors %}errors{% endif %}">
+                            {{ form.label }}
+                            <label for="{{ form.label.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.label.label }} <span
+                                    class="text-danger">*</span></label>
+                        </div>
+                        {{ form.label.errors }}
+                    </div>
+                    <div class="col-md-6">
+                        <div class="comment-item {% if form.phone_number.errors %}errors{% endif %}">
+                            {{ form.phone_number }}
+                            <label for="{{ form.phone_number.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.phone_number.label }} <span
+                                    class="text-danger">*</span></label>
+                        </div>
+                        {{ form.phone_number.errors }}
+                    </div>
+                    <div class="col-md-4">
+                        <div class="comment-item {% if form.street_or_neighborhood.errors %}errors{% endif %}">
+                            {{ form.street_or_neighborhood }}
+                            <label for="{{ form.street_or_neighborhood.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.street_or_neighborhood.label }} <span
+                                    class="text-danger">*</span></label>
+                        </div>
+                        {{ form.street_or_neighborhood.errors }}
+                    </div>
+                    <div class="col-md-4">
+                        <div class="comment-item {% if form.plate_number.errors %}errors{% endif %}">
+                            {{ form.plate_number }}
+                            <label for="{{ form.plate_number.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.plate_number.label }} <span
+                                    class="text-danger">*</span></label>
+                        </div>
+                        {{ form.plate_number.errors }}
+                    </div>
+                    <div class="col-md-4">
+                        <div class="comment-item {% if form.home_unit.errors %}errors{% endif %}">
+                            {{ form.home_unit }}
+                            <label for="{{ form.home_unit.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.home_unit.label }}</label>
+                        </div>
+                        {{ form.home_unit.errors }}
+                    </div>
+                    <div class="col-12">
+                        <div class="comment-item mb-3">
+                            {{ form.description }}
+                            <label for="{{ form.description.id_for_label }}"
+                                   class="form-label label-float fw-bold bg-transparent">{{ form.description.label }}
+                                <span
+                                        class="text-danger">*</span></label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn main-color-one-bg px-3 py-2">ویرایش آدرس</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

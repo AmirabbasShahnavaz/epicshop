@@ -1,0 +1,95 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load static %}
+
+{% block title %}ویرایش حساب کاربری{% endblock %}
+
+{% block scripts %}
+    <script>
+        id_avatar.onchange = evt => {
+            const [file] = id_avatar.files
+            if (file) {
+                avatarUser.src = URL.createObjectURL(file)
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">ویرایش حساب کاربری</li>
+{% endblock %}
+
+{% block content %}
+    <div class="section-title mb-4">
+        <div class="row gy-3 align-items-center">
+            <div class="col-sm-8">
+                <div class="section-title-title">
+                    <h2 class="title-font main-color-two-color h1">ویرایش <span class="text-dark">حساب کاربری</span>
+                    </h2>
+                    <div class="Dottedsquare"></div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="section-title-link text-sm-end text-start">
+                    <a href="{% url 'user_panel_home_page' %}" class="btn main-color-one-bg">بازگشت <i
+                            class="bi bi-reply-all-fill ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-parent content-box rounded-3">
+        <div class="container-fluid">
+            <form action="{% url 'user_panel_edit_user_page' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row gy-2">
+                    <div class="col-sm-6">
+                        <div class="comment-item mb-3 {% if form.first_name.errors %}errors{% endif %}">
+                            {{ form.first_name }}
+                            <label for="{{ form.first_name.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.first_name.label }}</label>
+                        </div>
+                        {{ form.first_name.errors }}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="comment-item mb-3 {% if form.last_name.errors %}errors{% endif %}">
+                            {{ form.last_name }}
+                            <label for="{{ form.last_name.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.last_name.label }}</label>
+                        </div>
+                        {{ form.last_name.errors }}
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="comment-item mb-3 {% if form.email.errors %}errors{% endif %}">
+                            {{ form.email }}
+                            <label for="{{ form.email.id_for_label }}"
+                                   class="form-label label-float fw-bold">{{ form.email.label }}</label>
+                        </div>
+                        {{ form.email.errors }}
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="{{ form.avatar.id_for_label }}" class="me-3">{{ form.avatar.label }}</label>
+                        {{ form.avatar }}
+                        <div style="text-align: -webkit-center">
+                            {% if user.avatar %}
+                                <img src="{{ user.avatar.url }}" id="avatarUser" class="img-responsive img-preview"/>
+                            {% else %}
+                                <img src="{% static 'assets/img/user.png' %}" id="avatarUser"
+                                     class="img-responsive img-preview"/>
+                            {% endif %}
+                        </div>
+                        {{ form.avatar.errors }}
+                    </div>
+                    {% if next_url %}
+                        <input type="hidden" name="next" value="{{ next_url }}">
+                    {% endif %}
+                    <div class="col-12">
+                        <input type="submit" value="ویرایش" class="btn main-color-two-bg px-5 w-100-in-400 pt-2">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

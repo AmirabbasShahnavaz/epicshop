@@ -1,0 +1,74 @@
+{% extends 'user_panel/user_panel_base.html' %}
+
+{% load static %}
+{% load poll_extras %}
+
+{% block title %}جزئیات تیکت{% endblock %}
+
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_home_page' %}">مدیریت حساب
+        کاربری</a></li>
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'user_panel_ticket_list_page' %}">تیکت
+        های
+        پشتیبانی</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">جزئیات تیکت</li>
+{% endblock %}
+
+{% block content %}
+    <div class="slider-parent rounded-3 py-4">
+        <div class="container-fluid">
+            {% for ticket_message in ticket.messages.all %}
+                <div class="comment {% if not ticket_message.is_admin %}active{% endif %}">
+                    <div class="comment-author-ava">
+                        {% if ticket_message.is_admin %}
+                            <img src="{% static 'assets/img/support_avatar.webp' %}" alt="Avatar">
+                        {% else %}
+                            {% if ticket.user.avatar %}
+                                <img src="{{ ticket.user.avatar.url }}" alt="Avatar">
+                            {% else %}
+                                <img src="{% static 'assets/img/user.png' %}" alt="Avatar">
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="comment-body">
+                        <p class="comment-text">{{ ticket_message.message }}</p>
+                        <div class="comment-footer"><span class="comment-meta">
+                            {% if ticket_message.is_admin %}
+                                پشتیبانی سایت
+                            {% else %}
+                                {{ ticket.user.get_full_name }}
+                            {% endif %}
+                        </span>
+                            <div class="comment-date float-end"><span
+                                    class="comment-meta">{{ ticket_message.created_at|jalali_format }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Messages-->
+
+            {% if ticket.status == "Closed" %}
+                <div class="my-4">
+                    <div class="alert alert-danger text-center">
+                        تیکت بسته شده است و امکان ارسال پاسخ جدید وجود ندارد
+                    </div>
+                </div>
+            {% else %}
+                <h5 class="mb-3">ارسال پیام</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group {% if form.message.errors %}errors{% endif %}">
+                        {{ form.message }}
+                        {{ form.message.errors }}
+                    </div>
+                    <input type="hidden" name="ticket_code" value="{{ ticket.ticket_code }}"/>
+                    <div class="text-right">
+                        <button class="btn main-color-one-bg px-4 py-2" type="button">ارسال پیام</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block title %}گفتگو با کاربر - {{ ticket.title }}{% endblock %}
+{% block extrahead %}
+    <link href="{% static 'assets/js/plugin/swl-2/sweetalert2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/font/bootstrap-icon/bootstrap-icons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            font-family: Vazirmatn, sans-serif;
+            direction: rtl;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+        }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 15px;
+            margin: 8px 0;
+            max-width: 80%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .admin-msg {
+            background-color: #0d6efd; /* آبی بوت‌استرپ */
+            color: #fff;
+            margin-left: auto;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .user-msg {
+            background-color: #e9ecef; /* خاکستری روشن */
+            color: #212529;
+            margin-right: auto;
+            border: 1.5px solid #adb5bd;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .message-info {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-buttons a {
+            margin-left: 8px;
+        }
+
+        textarea:disabled {
+            background-color: #e9ecef;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h3 class="text-center mb-4">💬 گفتگوی تیکت: {{ ticket.title }}</h3>
+        <h4 class="text-center mb-4">👤 کاربر: {{ ticket.user.get_full_name|default:ticket.user.mobile }}</h4>
+        <div class="mb-3 text-center status-buttons">
+            {% if ticket.status != 'Closed' %}
+                <a href="{% url 'change_ticket_status' ticket.id 'Closed' %}" class="btn btn-danger btn-sm"
+                   id="close-ticket-btn">بستن تیکت</a>
+            {% endif %}
+            <a href="{% url 'admin:user_panel_ticket_module_ticket_changelist' %}" class="btn btn-secondary btn-sm">بازگشت
+                به لیست</a>
+        </div>
+
+        <div id="chat-box" style="max-height: 400px; overflow-y: auto;">
+            {#            {% for msg in messages %}#}
+            {#                <div class="message {% if msg.is_admin %}admin-msg{% else %}user-msg{% endif %}">#}
+            {#                    <div>{{ msg.message|linebreaksbr }}</div>#}
+            {#                    <div class="message-info">#}
+            {#                        <span>{% if msg.user_full_name %}{{ msg.user_full_name }}{% else %}#}
+            {#                            {{ msg.user_mobile }}{% endif %}</span>#}
+            {#                        <span>{{ msg.created_at }}</span>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            {% empty %}#}
+            {#                <p class="text-center text-muted">هیچ پیامی وجود ندارد.</p>#}
+            {#            {% endfor %}#}
+            {% for msg in messages %}
+                <div class="message {% if msg.is_admin %}admin-msg{% else %}user-msg{% endif %}">
+                    <div>{{ msg.message|linebreaksbr }}</div>
+                    <div class="message-info">
+            <span>
+                {% if msg.user_full_name %}
+                    {{ msg.user_full_name }}
+                {% else %}
+                    {{ msg.user_mobile }}
+                {% endif %}
+            </span> -
+                        <span>{{ msg.created_at }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-muted">هیچ پیامی وجود ندارد.</p>
+            {% endfor %}
+        </div>
+
+        {% if ticket.status != 'Closed' %}
+            <form method="post" id="chat-form" class="mt-3">
+                {% csrf_token %}
+                <textarea name="message" rows="3" placeholder="پیام خود را بنویسید..." class="form-control"
+                          required></textarea>
+                <button type="submit" class="btn btn-primary mt-2">ارسال</button>
+            </form>
+        {% else %}
+            <div class="alert alert-warning mt-3 text-center">این تیکت بسته شده است و امکان ارسال پیام جدید وجود
+                ندارد.
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'assets/js/plugin/swl-2/sweetalert2.all.min.js' %}"></script>
+    <script>
+        const chatBox = document.getElementById('chat-box');
+
+        function fetchMessages() {
+            fetch("{% url 'ticket_messages_api' ticket.id %}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.messages) {
+                        chatBox.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            const div = document.createElement('div');
+                            div.className = 'message ' + (msg.is_admin ? 'admin-msg' : 'user-msg');
+                            div.innerHTML = `<div>${msg.message.replace(/\n/g, '<br>')}</div>
+                <div class="message-info">
+                    <span>${msg.user_full_name || msg.user_mobile}</span>
+                    <span>${msg.created_at}</span>
+                </div>`;
+                            chatBox.appendChild(div);
+                        });
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                });
+        }
+
+        fetchMessages();
+        setInterval(fetchMessages, 3000);
+
+        document.getElementById('chat-form')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        Swal.fire('خطا', data.error, 'error');
+                    } else {
+                        this.reset();
+                        fetchMessages();
+                    }
+                });
+        });
+
+        document.getElementById('close-ticket-btn')?.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.href;
+            Swal.fire({
+                title: 'آیا مطمئن هستید می‌خواهید تیکت را ببندید؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله، بستن تیکت',
+                cancelButtonText: 'لغو',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    </script>
+{% endblock %}

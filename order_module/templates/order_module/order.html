@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% load poll_extras %}
+{% load humanize %}
+
+{% block title %}سفارش من{% endblock %}
+{% block bread_camp %}
+    <li class="breadcrumb-item"><a class="font-14 text-muted-two" href="{% url 'home_page' %}">خانه</a></li>
+    <li aria-current="page" class="breadcrumb-item active main-color-one-color font-14 fw-bold">سفارش من</li>
+{% endblock %}
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="line-step-container d-sm-block d-none">
+                <div class="line-step">
+                    <div class="line-step-boxs">
+                        <div class="line-step-box complete">
+                            <a href="">
+                                <p>سبد خرید</p>
+                                <div class="icon">
+                                    1
+                                </div>
+                            </a>
+                        </div>
+                        <div class="line-step-box complete">
+                            <a href="">
+                                <p>جزییات پرداخت</p>
+                                <div class="icon">
+                                    2
+                                </div>
+                            </a>
+                        </div>
+                        <div class="line-step-box disabled">
+                            <a href="">
+                                <p>تکمیل سفارش</p>
+                                <div class="icon">
+                                    3
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row gy-3">
+                <div class="col-lg-9">
+                    <div class="cart-product-item">
+                        <div class="container-fluid">
+
+                            <div class="alert bg-white shadow-box d-flex align-items-center justify-content-between rounded-4">
+                                <div class="d-flex align-items-center font-18 fw-bold">
+                                    <i class="bi bi-clock me-2"></i>
+                                    تامین و ارسال سفارش: 1 روز کاری دیگر
+                                </div>
+                            </div>
+
+                            <div class="alert bg-white shadow-box">
+                                <h5 class="font-18 border-bottom pb-3">
+                                    جزئیات سفارش
+                                </h5>
+                                <div class="detail-order mt-3">
+                                    <div class="detail-order-item d-flex align-items-center">
+                                        <h6><i class="bi bi-pin-map-fill me-1"></i> آدرس تحویل:</h6>
+                                        <span class="ms-2 text-muted">{{ user_order.address.full_address }}</span>
+                                    </div>
+                                    {% if form %}
+                                        <div class="detail-order-item mt-3 d-flex align-items-center {% if form.first_name.errors %}errors{% endif %}">
+                                            <h6><i class="bi bi-person-fill me-1"></i>نام:</h6>
+                                            {{ form.first_name }}
+                                        </div>
+                                            {{ form.first_name.errors }}
+                                        <div class="detail-order-item mt-3 d-flex align-items-center {% if form.last_name.errors %}errors{% endif %}">
+                                            <h6><i class="bi bi-person-fill me-1"></i>نام خانوادگی:</h6>
+                                            {{ form.last_name }}
+                                        </div>
+                                            {{ form.last_name.errors }}
+                                    {% else %}
+                                        <div class="detail-order-item mt-3 d-flex align-items-center">
+                                            <h6><i class="bi bi-person-fill me-1"></i>تحویل گیرنده:</h6>
+                                            <span class="ms-2 text-muted">{{ user_order.user.get_full_name }}</span>
+                                        </div>
+                                    {% endif %}
+
+
+                                    <div class="detail-order-item mt-3 d-flex align-items-center">
+                                        <h6><i class="bi bi-telephone-fill me-1"></i>شماره تماس:</h6>
+                                        <span class="ms-2 text-muted font-16">{{ user_order.address.phone_number }}</span>
+                                    </div>
+                                </div>
+
+                                <ul class="row gy-3 ps-0 mt-4">
+                                    {% for order_item in user_order.orders.all %}
+                                        <div class="col-sm-6">
+                                            <div class="cart-canvas border rounded-3 p-3 pb-0">
+                                                <div class="row align-items-center">
+                                                    <div class="col-4 ps-0">
+                                                        <img src="{{ order_item.product.image.url }}" width="200"
+                                                             alt="{{ order_item.product.title }}">
+                                                    </div>
+                                                    <div class="col-8">
+                                                        <h3 class="text-overflow-2 font-16">{{ order_item.product.title }}</h3>
+                                                        <div class="product-box-suggest-price my-2  d-flex align-items-center justify-content-between">
+                                                            <ins class="font-25 ms-0">{{ order_item.product.price|intcomma:False }}
+                                                                <span>تومان</span></ins>
+                                                        </div>
+                                                        <div class="cart-canvas-foot d-flex align-items-center justify-content-between">
+                                                            <div class="cart-canvas-count">
+                                                                <span>تعداد:</span>
+                                                                <span class="fw-bold">{{ order_item.quantity }}</span>
+                                                            </div>
+                                                            <div class="cart-canvas-delete">
+                                                                <a onclick="submit_form_question('dest_item_{{ forloop.counter }}')"
+                                                                   class="btn"><i class="bi bi-x"></i></a>
+                                                            </div>
+                                                        </div>
+                                                        <form action="{% url 'order_destroy_order_item_page' %}"
+                                                              method="post" id="dest_item_{{ forloop.counter }}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="o_item_id"
+                                                                   value="{{ order_item.id }}">
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </ul>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="position-sticky top-0">
+                        <div class="cart__order-total">
+                            <div class="box__shaped-title">
+                                <svg width="230" height="75" viewBox="0 0 230 75" fill="none">
+                                    <path d="M230 0H0V10C26.2258 10.6605 43.6909 20.4901 52.0499 27.9356C60.4088 35.3811 84.5186 61.9259 84.5186 61.9259C101.038 79.219 128.627 79.219 145.146 61.9259C145.146 61.9259 169.146 35.4578 177.549 28.0042C185.953 20.5506 203.675 10.6625 230 10V0Z"
+                                          fill="#f4f4f4"></path>
+                                    <defs>
+                                        <linearGradient id="paint0_linear" x1="115" y1="0" x2="115" y2="74.8957"
+                                                        gradientUnits="userSpaceOnUse">
+                                            <stop stop-color="#FAFBFB"></stop>
+                                            <stop offset="1" stop-color="#F4F6F8"></stop>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="box__shaped-title__icon"></div>
+                            </div>
+                            <div class="cart__order-total-row">
+                                <label class="order-total-row__col-right">جمع مبلغ کالاها:</label>
+                                <div class="order-total-row__col-left">
+                                    <span>{{ order_items_amount|intcomma:False }}</span><span
+                                        class="font-12 ms-1">تومان</span>
+                                </div>
+                            </div>
+                            <div class="cart__order-total-row">
+                                <label class="order-total-row__col-right">ارزش افزوده (10%):</label>
+                                <div class="order-total-row__col-left">
+                                    <span>{{ tax_price|intcomma:False }}</span><span
+                                        class="font-12 ms-1">تومان</span>
+                                </div>
+                            </div>
+                            <div class="cart__order-total-row cart__order-total-row--benefit">
+                                <div class="order-total-row__col-right">سود شما از خرید :</div>
+                                <div class="order-total-row__col-left">
+                                    <span>0</span><span class="font-12 ms-1">تومان</span>
+                                </div>
+                            </div>
+                            <div class="cart__order-total-box">
+                                <div class="cart__order-total-row cart__order-total-row--total"><label
+                                        class="order-total-row__col-right">روش پرداختی :</label>
+                                    <div class="order-total-row__col-left">
+                                        <form action="{% url 'order_page' %}" method="post" id="pay_order_form">
+                                            {% csrf_token %}
+                                            <span>
+                                            <input type="radio" class="btn-check order_pay_method" name="pay_method"
+                                                   value="pay_wallet" id="wallet"
+                                                   autocomplete="off" onclick="handle_payment()">
+                                            <label class="btn btt-light order_pay_method_lbl" for="wallet">
+                                                کیف پول
+                                            </label>
+                                        </span>
+                                            <span>
+                                            <input type="radio" class="btn-check order_pay_method" name="pay_method"
+                                                   value="pay_ipg" id="getway"
+                                                   autocomplete="off" onclick="handle_payment()" checked>
+                                            <label class="btn btt-light order_pay_method_lbl"
+                                                   for="getway">
+                                                درگاه اینترنتی
+                                            </label>
+                                        </span>
+                                            <input type="hidden" name="first_name" id="first_name_ipt">
+                                            <input type="hidden" name="last_name" id="last_name_ipt">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="wallet-balance-box" style="display: none; margin-top: 10px;">
+                                <p>موجودی شما: <strong
+                                        id="wallet-balance">{{ user_balance_amount|intcomma:False }}</strong> تومان</p>
+                            </div>
+                            <div class="cart__order-total-row cart__order-total-row--total"><label
+                                    class="order-total-row__col-right">جمع سبد خرید :</label>
+                                <div class="order-total-row__col-left">
+                                    <span>{{ user_order.amount|add:tax_price|intcomma:False }}</span><span
+                                        class="font-12 ms-1">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <a onclick="pay_submit('{{ user_balance_amount|intcomma:False }}','{{ user_order.amount|intcomma:False }}')"
+                               class="btn w-100 d-block main-color-green py-3">پرداخت</a>
+                            <a onclick="submit_form_question('cancel_order_form',true)"
+                               class="btn w-100 d-block main-color-one-bg py-3 ms-3">انصراف</a>
+                        </div>
+                    </div>
+                    <form action="{% url 'order_canceling_page' %}" method="post" id="cancel_order_form">
+                        {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

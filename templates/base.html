@@ -1,0 +1,49 @@
+{% load render_partial %}
+<!doctype html>
+<html class="no-js" dir="rtl" lang="Fa_IR">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% include 'partials/header_references.html' %}
+    {% block styles %}{% endblock %}
+</head>
+<body>
+<div id="page-loader">
+    <div class="loader-content">
+        <div class="spinner"></div>
+        <p class="loading-text">در حال بارگذاری سایت...</p>
+    </div>
+</div>
+
+{% render_partial 'web_module.views.header_component' %}
+
+{% if request.resolver_match.url_name != 'home_page' %}
+    <div class="bread-crumb py-4">
+        <div class="container-fluid">
+            <nav aria-label="breadcrumb" class="my-lg-0 my-2">
+                <ol class="breadcrumb mb-0">
+                    {% block bread_camp %}{% endblock %}
+                </ol>
+            </nav>
+        </div>
+    </div>
+{% endif %}
+
+
+{% block content %}{% endblock %}
+{% render_partial 'web_module.views.cart_convas_basket_component_view' %}
+{% render_partial 'web_module.views.footer_component' %}
+{% include 'partials/footer_references.html' %}
+{% include 'site_notifications.html' %}
+{% block scripts %}{% endblock %}
+
+<script>
+    document.body.classList.add("loading");
+
+    window.addEventListener("load", () => {
+        const loader = document.getElementById("page-loader");
+        loader.classList.add("hide");
+        document.body.classList.remove("loading");
+    });
+</script>
+</body>
+</html>

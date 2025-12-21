@@ -1,0 +1,77 @@
+{% load static %}
+{% load humanize %}
+<div class="main-slider">
+    <div class="container-fluid">
+        <div class="row gy-3">
+            {% if instant_offer_products.count >= 1 %}
+                <div class="col-xl-3 col-lg-4 orderlgl-1 order-2">
+                    <div class="slider-parent-two">
+                        <div class="suggest-moment-parent">
+                            <div class="swiper suggetMoment">
+                                <div class="swiper-wrapper position-relative">
+                                    {% for instant_product in instant_offer_products %}
+                                        <div class="swiper-slide">
+                                            <div class="product-box-suggest">
+                                                <div class="product-box-image">
+                                                    <div class="product-box-suggest-image">
+                                                        <img src="{{ instant_product.image.url }}"
+                                                             alt="{{ instant_product.title }}">
+                                                    </div>
+                                                    <div class="product-box-suggest-title">
+                                                        <h6 class="text-overflow-1">{{ instant_product.title }}</h6>
+                                                    </div>
+                                                    {% if instant_product.productcolor_set %}
+                                                        <div class="color-box">
+                                                            {% for product_color in instant_product.productcolor_set.all %}
+                                                                <div class="color-box-item" data-bs-placement="top"
+                                                                     data-bs-title="{{ product_color.name }}"
+                                                                     data-bs-toggle="tooltip">
+                                                <span class="color hint--top"
+                                                      style="background-color: {{ product_color.color_code }};"></span>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="product-box-suggest-price">
+                                                    <ins>{{ instant_product.get_first_color.price|intcomma:False }}
+                                                        <span>تومان</span>
+                                                    </ins>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="swiper-progress-bar">
+                                    <span class="slide_progress-bar"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if sliders.count >= 1 %}
+                <div class="col-xl-9 col-lg-8 order-lg-2 order-1">
+                    <div class="slider slider-parent">
+                        <div class="swiper homeSlider" id="">
+                            <div class="swiper-wrapper">
+                                {% for slider in sliders %}
+                                    <div class="swiper-slide">
+                                        <a href="">
+                                            <img src="{{ slider.image.url }}" loading="lazy"
+                                                 class="img-fluid"
+                                                 alt="{{ slider.title }}">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="swiper-button-next d-lg-flex d-none"></div>
+                            <div class="swiper-button-prev d-lg-flex d-none"></div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+{% extends 'authentication/authentication_base.html' %}
+{% load static %}
+
+{% block title %}فعال سازی حساب کاربری{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'assets/js/plugin/otp-sms/otp-input.js' %}"></script>
+    <script src="{% static 'assets/js/plugin/otp-loader/script.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="client-page content vh-100">
+        <div class="container-fluid h-100">
+            <div class="auth h-100 d-flex align-items-center">
+                <div class="container-fluid">
+                    <div class="auth-items">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="row align-items-center bg-white rounded-3 g-0 shadow-2xl">
+                                    <div class="col-lg-6">
+                                        <div class="login-vector bg-white text-center">
+                                            <img src="{% static 'assets/img/login-vector.jpg' %}" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="auth-parent py-3">
+                                            <div class="auth-logo text-center">
+                                                <a href="{% url 'home_page' %}">
+                                                    <img src="{% static 'assets/img/logo.png' %}" width="200" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="auth-form bg-white">
+                                                <div class="auth-form-title mb-4 slider-title-desc-center">
+                                                    <h2 class="text-center h4 title-line-bottom-center text-muted title-font">
+                                                        فعالسازی حساب کاربری</h2>
+                                                </div>
+                                                <div class="alert text-center alert-success">
+                                                    یک کد برای {{ mobile_show }} پیامک شد لطفا آن را وارد کنید
+                                                </div>
+                                                {% if error_message %}
+                                                    <div class="mt-2 alert alert-danger alert-dismissible fade show"
+                                                         role="alert">
+                                                        <span>{{ error_message }}</span>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                {% endif %}
+                                                <form action="{% url 'mobile_activation_page' %}" method="post"
+                                                      id="otp-form">
+                                                    {% csrf_token %}
+                                                    <div id="otp-input">
+                                                        <input placeholder="_" type="number" step="1" min="0" max="9"
+                                                               autocomplete="no" pattern="\d*"/>
+                                                        <input placeholder="_" type="number" step="1" min="0" max="9"
+                                                               autocomplete="no" pattern="\d*"/>
+                                                        <input placeholder="_" type="number" step="1" min="0" max="9"
+                                                               autocomplete="no" pattern="\d*"/>
+                                                        <input placeholder="_" type="number" step="1" min="0" max="9"
+                                                               autocomplete="no" pattern="\d*"/>
+                                                        <input placeholder="_" type="number" step="1" min="0" max="9"
+                                                               autocomplete="no" pattern="\d*"/>
+                                                        {{ form.otp_code }}
+                                                    </div>
+                                                    <span>{{ form.otp_code.errors }}</span>
+
+                                                    <div class="countDownContainer">
+                                                        <div class="countdown-bar" id="countdownB"
+                                                             data-url="{% url 'resend_mobile_activation_page' phone=mobile %}">
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    </div>
+                                                    {% if next_url %}
+                                                        <input type="hidden" name="next" value="{{ next_url }}">
+                                                    {% endif %}
+                                                    <div class="form-group mt-4">
+                                                        <button type="submit" id="submit"
+                                                                class="btn main-color-one-bg d-block w-100 py-3">
+                                                            فعالسازی
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
